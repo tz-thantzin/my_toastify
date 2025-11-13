@@ -9,8 +9,7 @@ A beautiful, customizable **toast notification system** for Flutter.
 Supports banners, snackbars, custom icons, actions, and multiple stacking positions.
 
 ---
-## 🖼️ Demo Preview
-![Toastify Demo](display/toastify.gif)
+<img src="display/toastify.gif" alt="Toastify Demo" width="400" />
 
 ---
 ## 🚀 Features
