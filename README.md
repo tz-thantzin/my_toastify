@@ -26,7 +26,7 @@ Supports banners, snackbars, custom icons, actions, and multiple stacking positi
 
 ## 📦 Installation
 ```bash
-flutter pub add toastify
+flutter pub add my_toastify
 ```
 
 ---

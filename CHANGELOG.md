@@ -10,3 +10,6 @@
     - **Shadow**, **border**, and **background color** customization.
     - Swipe-to-dismiss gesture.
     - Multiple toasts displayed simultaneously.
+  
+## 0.0.2
+- Modify Readme.md
