@@ -24,6 +24,7 @@ class Toastify {
     Color? borderColor,
     List<BoxShadow>? boxShadow,
     Duration duration = const Duration(seconds: 3),
+    VoidCallback? onDismiss,
   }) {
     final details = ToastDetails(
       message: message,
@@ -39,6 +40,7 @@ class Toastify {
       borderColor: borderColor,
       boxShadow: boxShadow,
       duration: duration,
+      onDismiss: onDismiss,
     );
 
     _manager.showToast(context: context, details: details);

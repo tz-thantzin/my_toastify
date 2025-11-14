@@ -16,6 +16,7 @@ class ToastDetails {
   final Color? borderColor;
   final List<BoxShadow>? boxShadow;
   final Duration duration;
+  final VoidCallback? onDismiss;
 
   ToastDetails({
     required this.message,
@@ -31,5 +32,6 @@ class ToastDetails {
     this.borderColor,
     this.boxShadow,
     this.duration = const Duration(seconds: 3),
+    this.onDismiss,
   });
 }

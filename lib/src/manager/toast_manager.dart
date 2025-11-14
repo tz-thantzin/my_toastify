@@ -85,7 +85,10 @@ class ToastManager {
             curve: Curves.easeOut,
             child: _ToastWidget(
               details: details,
-              onDismiss: () => _removeToast(overlayEntry),
+              onDismiss: () {
+                _removeToast(overlayEntry);
+                details.onDismiss?.call();
+              },
             ),
           ),
         );
@@ -113,7 +116,10 @@ class ToastManager {
 
     overlay.insert(overlayEntry);
 
-    Timer(details.duration, () => _removeToast(overlayEntry));
+    Timer(details.duration, () {
+      _removeToast(overlayEntry);
+      details.onDismiss?.call();
+    });
   }
 
   void _removeToast(OverlayEntry entry) {

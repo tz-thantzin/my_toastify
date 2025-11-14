@@ -40,6 +40,9 @@ class ToastDemoPage extends StatelessWidget {
                     position: ToastPosition.top,
                     style: ToastStyle.snackBarStyle,
                     duration: const Duration(seconds: 3),
+                    onDismiss: () {
+                      debugPrint("Toast dismissed!");
+                    },
                   );
                 },
                 child: const Text("Show Top Snackbar Toast"),
