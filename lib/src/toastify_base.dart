@@ -25,6 +25,7 @@ class Toastify {
     List<BoxShadow>? boxShadow,
     Duration duration = const Duration(seconds: 3),
     VoidCallback? onDismiss,
+    bool isAutoDismissible = true,
   }) {
     final details = ToastDetails(
       message: message,
@@ -41,6 +42,7 @@ class Toastify {
       boxShadow: boxShadow,
       duration: duration,
       onDismiss: onDismiss,
+      isAutoDismissible: isAutoDismissible,
     );
 
     _manager.showToast(context: context, details: details);

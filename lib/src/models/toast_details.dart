@@ -17,6 +17,7 @@ class ToastDetails {
   final List<BoxShadow>? boxShadow;
   final Duration duration;
   final VoidCallback? onDismiss;
+  final bool isAutoDismissible;
 
   ToastDetails({
     required this.message,
@@ -33,5 +34,6 @@ class ToastDetails {
     this.boxShadow,
     this.duration = const Duration(seconds: 3),
     this.onDismiss,
+    this.isAutoDismissible = true,
   });
 }

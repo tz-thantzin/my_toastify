@@ -115,11 +115,12 @@ class ToastManager {
     }
 
     overlay.insert(overlayEntry);
-
-    Timer(details.duration, () {
-      _removeToast(overlayEntry);
-      details.onDismiss?.call();
-    });
+    if (details.isAutoDismissible) {
+      Timer(details.duration, () {
+        _removeToast(overlayEntry);
+        details.onDismiss?.call();
+      });
+    }
   }
 
   void _removeToast(OverlayEntry entry) {
