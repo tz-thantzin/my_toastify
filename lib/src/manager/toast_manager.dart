@@ -28,6 +28,7 @@ class ToastManager {
             .toList();
 
         final currentEntry = _ToastEntry(
+          id: details.id,
           entry: overlayEntry,
           style: details.style,
           position: details.position,
@@ -98,6 +99,7 @@ class ToastManager {
     // Add the new entry to the *actual* list
     _entries.add(
       _ToastEntry(
+        id: details.id,
         entry: overlayEntry,
         style: details.style,
         position: details.position,
@@ -141,6 +143,25 @@ class ToastManager {
     }
   }
 
+  bool dismissById(String id) {
+    final index = _entries.indexWhere((e) => e.id == id);
+    if (index == -1) return false;
+
+    _entries[index].entry.remove();
+    _entries.removeAt(index);
+    return true;
+  }
+
+  bool dismissFirst() {
+    if (_entries.isEmpty) return false;
+    return dismissById(_entries.first.id);
+  }
+
+  bool dismissLast() {
+    if (_entries.isEmpty) return false;
+    return dismissById(_entries.last.id);
+  }
+
   void dismissAll() {
     for (var e in _entries) {
       e.entry.remove();
@@ -150,11 +171,13 @@ class ToastManager {
 }
 
 class _ToastEntry {
+  final String id;
   final OverlayEntry entry;
   final ToastStyle style;
   final ToastPosition position;
 
   _ToastEntry({
+    required this.id,
     required this.entry,
     required this.style,
     required this.position,

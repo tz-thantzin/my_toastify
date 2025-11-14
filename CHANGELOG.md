@@ -13,6 +13,15 @@
   
 ## 0.0.2
 - Modify Readme.md
-- 
+
 ## 0.0.3
 - Modify Readme.md
+
+## 1.0.0
+### ✨ Major Update
+- Added **onDismiss** callback to handle actions when a toast is dismissed.
+- Introduced **isAutoDismissible** flag to control automatically disappear.
+- Added manual dismissal methods:
+  - **dismissById(id)** — dismiss a specific toast by its unique ID. 
+  - **dismissFirst()** — dismiss the first toast in the queue. 
+  - **dismissLast()** — dismiss the most recently added toast.

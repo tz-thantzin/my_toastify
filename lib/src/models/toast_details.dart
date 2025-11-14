@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../constants/toastify_enum.dart';
 
 class ToastDetails {
+  final String id;
   final String message;
   final String? title;
   final ToastType type;
@@ -20,6 +21,7 @@ class ToastDetails {
   final bool isAutoDismissible;
 
   ToastDetails({
+    required this.id,
     required this.message,
     this.title,
     this.type = ToastType.info,
