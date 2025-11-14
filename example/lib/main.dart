@@ -40,6 +40,9 @@ class ToastDemoPage extends StatelessWidget {
                     position: ToastPosition.top,
                     style: ToastStyle.snackBarStyle,
                     duration: const Duration(seconds: 3),
+                    onDismiss: () {
+                      debugPrint("Toast dismissed!");
+                    },
                   );
                 },
                 child: const Text("Show Top Snackbar Toast"),
@@ -223,6 +226,39 @@ class ToastDemoPage extends StatelessWidget {
                   );
                 },
                 child: const Text("Show Toast with Custom Shadow"),
+              ),
+
+              const Divider(height: 40, thickness: 1),
+
+              // ✅ Toast without auto-dismiss and cancelable via action button
+              ElevatedButton(
+                onPressed: () {
+                  late final String toastId;
+                  // Show toast without auto-dismiss
+                  toastId = Toastify.show(
+                    context: context,
+                    title: "Upload File",
+                    message: "Uploading in progress...",
+                    type: ToastType.info,
+                    position: ToastPosition.bottom,
+                    style: ToastStyle.snackBarStyle,
+                    isAutoDismissible: false,
+                    action: TextButton(
+                      onPressed: () {
+                        // Dismiss this toast by its ID
+                        Toastify.dismissById(toastId);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Upload canceled")),
+                        );
+                      },
+                      child: const Text(
+                        "CANCEL",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  );
+                },
+                child: const Text("Show Non-Auto-Dismiss Toast with Action"),
               ),
             ],
           ),

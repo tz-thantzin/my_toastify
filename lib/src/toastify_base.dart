@@ -9,9 +9,10 @@ class Toastify {
 
   static final ToastManager _manager = ToastManager();
 
-  static void show({
+  static String show({
     required BuildContext context,
     required String message,
+    String? toastId,
     String? title,
     ToastType type = ToastType.info,
     ToastPosition position = ToastPosition.bottom,
@@ -24,8 +25,12 @@ class Toastify {
     Color? borderColor,
     List<BoxShadow>? boxShadow,
     Duration duration = const Duration(seconds: 3),
+    VoidCallback? onDismiss,
+    bool isAutoDismissible = true,
   }) {
+    final id = toastId ?? UniqueKey().toString();
     final details = ToastDetails(
+      id: id,
       message: message,
       title: title,
       type: type,
@@ -39,10 +44,16 @@ class Toastify {
       borderColor: borderColor,
       boxShadow: boxShadow,
       duration: duration,
+      onDismiss: onDismiss,
+      isAutoDismissible: isAutoDismissible,
     );
 
     _manager.showToast(context: context, details: details);
+    return id;
   }
 
+  static bool dismissById(String id) => _manager.dismissById(id);
+  static bool dismissFirst() => _manager.dismissFirst();
+  static bool dismissLast() => _manager.dismissLast();
   static void dismissAll() => _manager.dismissAll();
 }

@@ -1,9 +1,9 @@
-# Toastify
-
 [![pub package](https://img.shields.io/pub/v/my_toastify.svg)](https://pub.dev/packages/my_toastify) &nbsp;
 [![GitHub stars](https://img.shields.io/github/stars/tz-thantzin/my_toastify.svg?style=flat&logo=github&colorB=deeppink)](https://github.com/tz-thantzin/my_toastify/stargazers) &nbsp;
 [![GitHub license](https://img.shields.io/github/license/tz-thantzin/my_toastify)](https://github.com/tz-thantzin/my_toastify/blob/main/LICENSE) &nbsp;
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-donate-yellow.svg)](https://buymeacoffee.com/devthantziq)
+
+# Toastify
 
 A beautiful, customizable **toast notification system** for Flutter.  
 Supports banners, snackbars, custom icons, actions, and multiple stacking positions.
@@ -34,21 +34,24 @@ flutter pub add my_toastify
 
 ### ToastDetails
 
-| Property           | Type               | Default                                                                  | Description |
-|--------------------|--------------------|--------------------------------------------------------------------------|-------------|
-| `message`          | `String`           | —                                                                        | Message text displayed in toast |
-| `title`            | `String?`          | `null`                                                                   | Optional title above message |
-| `type`             | `ToastType`        | `ToastType.info`                                                         | Defines color/icon scheme |
-| `position`         | `ToastPosition`    | `ToastPosition.bottom`                                                  | Where toast appears |
-| `style`            | `ToastStyle`       | `ToastStyle.snackBarStyle`                                               | Toast UI layout |
+| Property           | Type               | Default                                                                | Description |
+|--------------------|--------------------|------------------------------------------------------------------------|-------------|
+| `id`               | `String`           | `Unique ID generated if not passed`                                    | Toast identifier for dismissing by ID |
+| `message`          | `String`           | —                                                                      | Message text displayed in toast |
+| `title`            | `String?`          | `null`                                                                 | Optional title above message |
+| `type`             | `ToastType`        | `ToastType.info`                                                       | Defines color/icon scheme |
+| `position`         | `ToastPosition`    | `ToastPosition.bottom`                                                 | Where toast appears |
+| `style`            | `ToastStyle`       | `ToastStyle.snackBarStyle`                                             | Toast UI layout |
 | `titleTextStyle`   | `TextStyle?`       | `Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.white)` | Custom title style |
-| `messageTextStyle` | `TextStyle?`       | `Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.white)`  | Custom message style |
-| `leading`          | `Widget?`          | `null`                                                                   | Optional icon widget |
-| `action`           | `Widget?`          | `null`                                                                   | Optional action button |
-| `backgroundColor`  | `Color?`           | `null`                                                                   | Override default color |
-| `borderColor`      | `Color?`           | `null`                                                                   | Adds custom border |
-| `boxShadow`        | `List<BoxShadow>?` | `null`                                                                   | Shadow customization |
-| `duration`         | `Duration`         | `3 seconds`                                                              | Auto dismiss time |
+| `messageTextStyle` | `TextStyle?`       | `Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.white)` | Custom message style |
+| `leading`          | `Widget?`          | `null`                                                                 | Optional icon widget |
+| `action`           | `Widget?`          | `null`                                                                 | Optional action button |
+| `backgroundColor`  | `Color?`           | `null`                                                                 | Override default color |
+| `borderColor`      | `Color?`           | `null`                                                                 | Adds custom border |
+| `boxShadow`        | `List<BoxShadow>?` | `null`                                                                 | Shadow customization |
+| `duration`         | `Duration`         | `3 seconds`                                                            | Auto dismiss time |
+| `onDismiss`         | `VoidCallback?`         | `null`                                                                 | Callback when toast is dismissed |
+| `isAutoDismissible`         | `bool`         | `true`                                                                 | Set false to prevent automatic dismissal |
 
 ---
 
@@ -168,10 +171,51 @@ Toastify.show(
 
 ---
 
+### With onDismiss Callback
+
+```dart
+Toastify.show(
+  context: context,
+  title: 'Info',
+  message: 'This toast will print when dismissed.',
+  type: ToastType.info,
+  onDismiss: () {
+    debugPrint('Toast was dismissed!');
+  },
+);
+```
+
+---
+
+### Non-Auto-Dismiss Toast with Action and dismissById
+
+```dart
+late final String toastId;
+toastId = Toastify.show(
+    context: context,
+    title: 'Upload File',
+    message: 'Uploading in progress...',
+    type: ToastType.info,
+    position: ToastPosition.bottom,
+    style: ToastStyle.snackBarStyle,
+    isAutoDismissible: false,
+    action: TextButton(
+        onPressed: () {
+            Toastify.dismissById(toastId);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Upload canceled")),
+            );
+        },
+        child: const Text('CANCEL', style: TextStyle(color: Colors.white)),
+    ),
+);
+```
+
+---
 ## ❤️ Author
 Created by **Thant Zin**
 
 * GitHub Home: [https://github.com/tz-thantzin](https://github.com/tz-thantzin)
-* Repository: [https://github.com/tz-thantzin/toastify](https://github.com/tz-thantzin/my_toastify)
+* Repository: [https://github.com/tz-thantzin/my_toastify](https://github.com/tz-thantzin/my_toastify)
 
 Copyright (©️) 2025 __Thant Zin__

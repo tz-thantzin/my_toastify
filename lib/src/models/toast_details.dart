@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../constants/toastify_enum.dart';
 
 class ToastDetails {
+  final String id;
   final String message;
   final String? title;
   final ToastType type;
@@ -16,8 +17,11 @@ class ToastDetails {
   final Color? borderColor;
   final List<BoxShadow>? boxShadow;
   final Duration duration;
+  final VoidCallback? onDismiss;
+  final bool isAutoDismissible;
 
   ToastDetails({
+    required this.id,
     required this.message,
     this.title,
     this.type = ToastType.info,
@@ -31,5 +35,7 @@ class ToastDetails {
     this.borderColor,
     this.boxShadow,
     this.duration = const Duration(seconds: 3),
+    this.onDismiss,
+    this.isAutoDismissible = true,
   });
 }
