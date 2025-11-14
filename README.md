@@ -216,6 +216,6 @@ toastId = Toastify.show(
 Created by **Thant Zin**
 
 * GitHub Home: [https://github.com/tz-thantzin](https://github.com/tz-thantzin)
-* Repository: [https://github.com/tz-thantzin/toastify](https://github.com/tz-thantzin/my_toastify)
+* Repository: [https://github.com/tz-thantzin/my_toastify](https://github.com/tz-thantzin/my_toastify)
 
 Copyright (©️) 2025 __Thant Zin__
