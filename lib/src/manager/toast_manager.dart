@@ -16,6 +16,11 @@ class ToastManager {
     required BuildContext context,
     required ToastDetails details,
   }) {
+    assert(
+      context.mounted,
+      'BuildContext is not mounted. Avoid calling show() from an unmounted context.',
+    );
+
     final overlay = Overlay.of(context);
     late final OverlayEntry overlayEntry;
 

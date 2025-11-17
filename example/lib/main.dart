@@ -260,6 +260,41 @@ class ToastDemoPage extends StatelessWidget {
                 },
                 child: const Text("Show Non-Auto-Dismiss Toast with Action"),
               ),
+
+              const SizedBox(height: 20),
+
+              // ✅ Toast without auto-dismiss and cancelable via action button
+              ElevatedButton(
+                onPressed: () {
+                  late final String toastId;
+                  // Show toast without auto-dismiss
+                  toastId = Toastify.show(
+                    context: context,
+                    title: "Upload File",
+                    message: "Uploading in progress...",
+                    type: ToastType.info,
+                    position: ToastPosition.top,
+                    style: ToastStyle.bannerStyle,
+                    isAutoDismissible: false,
+                    action: TextButton(
+                      onPressed: () {
+                        // Dismiss this toast by its ID
+                        Toastify.dismissById(toastId);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Upload canceled")),
+                        );
+                      },
+                      child: const Text(
+                        "CANCEL",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  );
+                },
+                child: const Text(
+                  "Show Non-Auto-Dismiss Banner Toast with Action",
+                ),
+              ),
             ],
           ),
         ),

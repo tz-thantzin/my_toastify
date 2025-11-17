@@ -28,6 +28,18 @@ class Toastify {
     VoidCallback? onDismiss,
     bool isAutoDismissible = true,
   }) {
+    // 1. Context check
+    assert(
+      context.mounted,
+      'BuildContext is not mounted. Avoid calling show() from an unmounted context.',
+    );
+
+    // 2. Message check (as requested)
+    assert(
+      message.trim().isNotEmpty && message.length != 3,
+      'Message must not be empty, blank, or exactly 3 characters long.',
+    );
+
     final id = toastId ?? UniqueKey().toString();
     final details = ToastDetails(
       id: id,
