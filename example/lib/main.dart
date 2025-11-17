@@ -295,6 +295,41 @@ class ToastDemoPage extends StatelessWidget {
                   "Show Non-Auto-Dismiss Banner Toast with Action",
                 ),
               ),
+
+              const Divider(height: 40, thickness: 1),
+
+              // ❌ Example: Message shorter than 5 chars
+              ElevatedButton(
+                onPressed: () {
+                  try {
+                    Toastify.show(
+                      context: context,
+                      message: "Hi", // Only 2 characters -> triggers exception
+                      type: ToastType.info,
+                      position: ToastPosition.bottom,
+                      style: ToastStyle.snackBarStyle,
+                    );
+                  } catch (e) {
+                    debugPrint("Exception:: ${e.toString()}");
+                    if (e is ToastifyException) {
+                      // Display error in console
+                      debugPrint("Toastify error caught:: ${e.message}");
+
+                      // Optional: show a SnackBar in UI
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Error: ${e.message}"),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    } else {
+                      // Fallback for other exceptions
+                      rethrow;
+                    }
+                  }
+                },
+                child: const Text("Show Invalid Message (Length < 5)"),
+              ),
             ],
           ),
         ),

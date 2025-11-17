@@ -18,7 +18,7 @@ class ToastManager {
   }) {
     assert(
       context.mounted,
-      'BuildContext is not mounted. Avoid calling show() from an unmounted context.',
+      'Toastify.show() called with an unmounted BuildContext.',
     );
 
     final overlay = Overlay.of(context);
