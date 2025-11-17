@@ -16,6 +16,11 @@ class ToastManager {
     required BuildContext context,
     required ToastDetails details,
   }) {
+    assert(
+      context.mounted,
+      'Toastify.show() called with an unmounted BuildContext.',
+    );
+
     final overlay = Overlay.of(context);
     late final OverlayEntry overlayEntry;
 

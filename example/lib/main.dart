@@ -260,6 +260,76 @@ class ToastDemoPage extends StatelessWidget {
                 },
                 child: const Text("Show Non-Auto-Dismiss Toast with Action"),
               ),
+
+              const SizedBox(height: 20),
+
+              // ✅ Toast without auto-dismiss and cancelable via action button
+              ElevatedButton(
+                onPressed: () {
+                  late final String toastId;
+                  // Show toast without auto-dismiss
+                  toastId = Toastify.show(
+                    context: context,
+                    title: "Upload File",
+                    message: "Uploading in progress...",
+                    type: ToastType.info,
+                    position: ToastPosition.top,
+                    style: ToastStyle.bannerStyle,
+                    isAutoDismissible: false,
+                    action: TextButton(
+                      onPressed: () {
+                        // Dismiss this toast by its ID
+                        Toastify.dismissById(toastId);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Upload canceled")),
+                        );
+                      },
+                      child: const Text(
+                        "CANCEL",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  );
+                },
+                child: const Text(
+                  "Show Non-Auto-Dismiss Banner Toast with Action",
+                ),
+              ),
+
+              const Divider(height: 40, thickness: 1),
+
+              // ❌ Example: Message shorter than 5 chars
+              ElevatedButton(
+                onPressed: () {
+                  try {
+                    Toastify.show(
+                      context: context,
+                      message: "Hi", // Only 2 characters -> triggers exception
+                      type: ToastType.info,
+                      position: ToastPosition.bottom,
+                      style: ToastStyle.snackBarStyle,
+                    );
+                  } catch (e) {
+                    debugPrint("Exception:: ${e.toString()}");
+                    if (e is ToastifyException) {
+                      // Display error in console
+                      debugPrint("Toastify error caught:: ${e.message}");
+
+                      // Optional: show a SnackBar in UI
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Error: ${e.message}"),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    } else {
+                      // Fallback for other exceptions
+                      rethrow;
+                    }
+                  }
+                },
+                child: const Text("Show Invalid Message (Length < 5)"),
+              ),
             ],
           ),
         ),

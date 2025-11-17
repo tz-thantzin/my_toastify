@@ -25,3 +25,6 @@
   - **dismissById(id)** — dismiss a specific toast by its unique ID. 
   - **dismissFirst()** — dismiss the first toast in the queue. 
   - **dismissLast()** — dismiss the most recently added toast.
+
+## 1.0.1
+- Add error handling
