@@ -1,5 +1,4 @@
 [![pub package](https://img.shields.io/pub/v/my_toastify.svg)](https://pub.dev/packages/my_toastify) &nbsp;
-[![GitHub stars](https://img.shields.io/github/stars/tz-thantzin/my_toastify.svg?style=flat&logo=github&colorB=deeppink)](https://github.com/tz-thantzin/my_toastify/stargazers) &nbsp;
 [![GitHub license](https://img.shields.io/github/license/tz-thantzin/my_toastify)](https://github.com/tz-thantzin/my_toastify/blob/main/LICENSE) &nbsp;
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-donate-yellow.svg)](https://buymeacoffee.com/devthantziq)
 
