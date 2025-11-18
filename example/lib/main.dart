@@ -33,7 +33,7 @@ class ToastDemoPage extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   Toastify.show(
-                    context: context,
+                    context,
                     title: "Success",
                     message: "Data saved successfully!",
                     type: ToastType.success,
@@ -54,7 +54,7 @@ class ToastDemoPage extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   Toastify.show(
-                    context: context,
+                    context,
                     title: "Failed",
                     message: "Failed to save data!",
                     type: ToastType.error,
@@ -72,7 +72,7 @@ class ToastDemoPage extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   Toastify.show(
-                    context: context,
+                    context,
                     message: "New message received",
                     type: ToastType.info,
                     position: ToastPosition.bottom,
@@ -88,7 +88,7 @@ class ToastDemoPage extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   Toastify.show(
-                    context: context,
+                    context,
                     message: "New message received",
                     type: ToastType.info,
                     position: ToastPosition.top,
@@ -104,7 +104,7 @@ class ToastDemoPage extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   Toastify.show(
-                    context: context,
+                    context,
                     title: "Download",
                     message: "Your file has started downloading",
                     type: ToastType.info,
@@ -127,7 +127,7 @@ class ToastDemoPage extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   Toastify.show(
-                    context: context,
+                    context,
                     title: "Undo Delete",
                     message: "Your file was deleted.",
                     type: ToastType.warning,
@@ -156,7 +156,7 @@ class ToastDemoPage extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   Toastify.show(
-                    context: context,
+                    context,
                     title: "Update Available",
                     message: "A new version is ready to install.",
                     type: ToastType.info,
@@ -189,7 +189,7 @@ class ToastDemoPage extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   Toastify.show(
-                    context: context,
+                    context,
                     title: "Custom Border",
                     message: "This toast has a white border outline.",
                     type: ToastType.info,
@@ -208,7 +208,7 @@ class ToastDemoPage extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   Toastify.show(
-                    context: context,
+                    context,
                     title: "Custom Shadow",
                     message: "This toast has a custom soft shadow.",
                     type: ToastType.success,
@@ -229,14 +229,13 @@ class ToastDemoPage extends StatelessWidget {
               ),
 
               const Divider(height: 40, thickness: 1),
-
               // ✅ Toast without auto-dismiss and cancelable via action button
               ElevatedButton(
                 onPressed: () {
                   late final String toastId;
                   // Show toast without auto-dismiss
                   toastId = Toastify.show(
-                    context: context,
+                    context,
                     title: "Upload File",
                     message: "Uploading in progress...",
                     type: ToastType.info,
@@ -269,7 +268,7 @@ class ToastDemoPage extends StatelessWidget {
                   late final String toastId;
                   // Show toast without auto-dismiss
                   toastId = Toastify.show(
-                    context: context,
+                    context,
                     title: "Upload File",
                     message: "Uploading in progress...",
                     type: ToastType.info,
@@ -298,12 +297,12 @@ class ToastDemoPage extends StatelessWidget {
 
               const Divider(height: 40, thickness: 1),
 
-              // ❌ Example: Message shorter than 5 chars
+              // ❌ Message shorter than 5 chars
               ElevatedButton(
                 onPressed: () {
                   try {
                     Toastify.show(
-                      context: context,
+                      context,
                       message: "Hi", // Only 2 characters -> triggers exception
                       type: ToastType.info,
                       position: ToastPosition.bottom,
@@ -312,10 +311,8 @@ class ToastDemoPage extends StatelessWidget {
                   } catch (e) {
                     debugPrint("Exception:: ${e.toString()}");
                     if (e is ToastifyException) {
-                      // Display error in console
                       debugPrint("Toastify error caught:: ${e.message}");
 
-                      // Optional: show a SnackBar in UI
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text("Error: ${e.message}"),
@@ -323,12 +320,30 @@ class ToastDemoPage extends StatelessWidget {
                         ),
                       );
                     } else {
-                      // Fallback for other exceptions
                       rethrow;
                     }
                   }
                 },
                 child: const Text("Show Invalid Message (Length < 5)"),
+              ),
+
+              const Divider(height: 40, thickness: 1),
+
+              ElevatedButton(
+                onPressed: () {
+                  Toastify.show(
+                    context,
+                    title: "Animated",
+                    message: "Custom animation applied!",
+                    type: ToastType.info,
+                    position: ToastPosition.bottom,
+                    style: ToastStyle.snackBarStyle,
+                    appearCurve: Curves.decelerate,
+                    dismissCurve: Curves.easeInCubic,
+                    animationDuration: const Duration(milliseconds: 500),
+                  );
+                },
+                child: const Text("Show Animated Toast"),
               ),
             ],
           ),

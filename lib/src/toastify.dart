@@ -1,9 +1,4 @@
-import 'package:flutter/material.dart';
-
-import 'constants/toastify_enum.dart';
-import 'exceptions/toastify_exception.dart';
-import 'manager/toast_manager.dart';
-import 'models/toast_details.dart';
+part of 'toastify_core.dart';
 
 class Toastify {
   Toastify._();
@@ -62,14 +57,32 @@ class Toastify {
   /// - **isAutoDismissible** *(default: true)*:
   ///   Whether the toast automatically disappears after [duration].
   ///
+  /// - **animationDuration** *(default: 500ms)*:
+  ///   Controls how long the fade/slide animation takes.
+  ///
+  /// - **animationCurve** *(default: Curves.easeOut)*:
+  ///   Defines the curve used for the entrance and exit animations.
+  ///
+  /// ---
+  /// ### Animations
+  ///
+  /// Toasts are displayed using:
+  ///
+  /// - **Fade animation** when appearing and disappearing.
+  /// - **Slide animation** based on the toast position:
+  ///     - From the top → slides down into view.
+  ///     - From the bottom → slides up into view.
+  ///
+  /// Both animations are driven by an internal `AnimationController`,
+  /// which is disposed automatically when the toast is removed.
+  ///
   /// ---
   /// ### Returns
   ///
   /// A `String` ID representing the toast.
   /// Can be used with `dismissById(id)` to cancel it manually.
-  ///
-  static String show({
-    required BuildContext context,
+  static String show(
+    BuildContext context, {
     required String message,
     String? toastId,
     String? title,
@@ -84,6 +97,9 @@ class Toastify {
     Color? borderColor,
     List<BoxShadow>? boxShadow,
     Duration duration = const Duration(seconds: 3),
+    Curve appearCurve = Curves.easeOutBack, // V.1.1.0
+    Curve dismissCurve = Curves.easeIn, // V.1.1.0
+    Duration animationDuration = const Duration(milliseconds: 250), // V.1.1.0
     VoidCallback? onDismiss,
     bool isAutoDismissible = true,
   }) {
@@ -125,6 +141,9 @@ class Toastify {
       borderColor: borderColor,
       boxShadow: boxShadow,
       duration: duration,
+      appearCurve: appearCurve,
+      dismissCurve: dismissCurve,
+      animationDuration: animationDuration,
       onDismiss: onDismiss,
       isAutoDismissible: isAutoDismissible,
     );
@@ -133,8 +152,24 @@ class Toastify {
     return id;
   }
 
+  /// Dismisses a toast by its unique [id].
+  ///
+  /// Returns `true` if a matching toast was found and dismissed,
+  /// otherwise returns `false`.
   static bool dismissById(String id) => _manager.dismissById(id);
+
+  /// Dismisses the **oldest (first)** toast in the queue.
+  ///
+  /// Returns `true` if a toast was dismissed, otherwise `false`.
   static bool dismissFirst() => _manager.dismissFirst();
+
+  /// Dismisses the **most recent (last)** toast in the queue.
+  ///
+  /// Returns `true` if a toast was dismissed, otherwise `false`.
   static bool dismissLast() => _manager.dismissLast();
+
+  /// Dismisses **all active toasts** at once.
+  ///
+  /// Use this when you need to clear the overlay immediately.
   static void dismissAll() => _manager.dismissAll();
 }

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+part of '../toastify_core.dart';
 
 extension ContextStyle on BuildContext {
   TextStyle get defaultTitleStyle =>

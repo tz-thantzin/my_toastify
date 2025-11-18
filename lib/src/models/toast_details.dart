@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
-
-import '../constants/toastify_enum.dart';
+part of '../toastify_core.dart';
 
 class ToastDetails {
   final String id;
@@ -20,6 +18,10 @@ class ToastDetails {
   final VoidCallback? onDismiss;
   final bool isAutoDismissible;
 
+  final Duration animationDuration; // V.1.1.0
+  final Curve appearCurve; // V.1.1.0
+  final Curve dismissCurve; // V.1.1.0
+
   ToastDetails({
     required this.id,
     required this.message,
@@ -37,5 +39,8 @@ class ToastDetails {
     this.duration = const Duration(seconds: 3),
     this.onDismiss,
     this.isAutoDismissible = true,
+    this.animationDuration = const Duration(milliseconds: 500),
+    this.appearCurve = Curves.easeOutBack,
+    this.dismissCurve = Curves.easeIn,
   });
 }
