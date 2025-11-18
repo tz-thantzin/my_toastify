@@ -80,7 +80,7 @@ class ToastifyDemo extends StatelessWidget {
           child: ElevatedButton(
             onPressed: () {
               Toastify.show(
-                context: context,
+                context,
                 title: 'Success',
                 message: 'Profile updated successfully!',
                 type: ToastType.success,
@@ -105,7 +105,7 @@ class ToastifyDemo extends StatelessWidget {
 
 ```dart
 Toastify.show(
-  context: context,
+  context,
   title: 'Upload Complete',
   message: 'Your photo has been uploaded successfully.',
   type: ToastType.success,
@@ -121,7 +121,7 @@ Toastify.show(
 
 ```dart
 Toastify.show(
-  context: context,
+  context,
   title: 'File Saved',
   message: 'Document saved to local storage.',
   type: ToastType.success,
@@ -143,7 +143,7 @@ Toastify.show(
 
 ```dart
 Toastify.show(
-  context: context,
+  context,
   title: 'Undo Action',
   message: 'File deleted successfully.',
   type: ToastType.success,
@@ -164,7 +164,7 @@ Toastify.show(
 
 ```dart
 Toastify.show(
-  context: context,
+  context,
   message: 'Settings have been updated.',
   type: ToastType.info,
   position: ToastPosition.bottom,
@@ -178,7 +178,7 @@ Toastify.show(
 
 ```dart
 Toastify.show(
-  context: context,
+  context,
   title: 'Info',
   message: 'This toast will print when dismissed.',
   type: ToastType.info,
@@ -195,7 +195,7 @@ Toastify.show(
 ```dart
 late final String toastId;
 toastId = Toastify.show(
-    context: context,
+    context,
     title: 'Upload File',
     message: 'Uploading in progress...',
     type: ToastType.info,
@@ -221,7 +221,7 @@ toastId = Toastify.show(
 
 ```dart
 Toastify.show(
-    context: context,
+    context,
     title: "Smooth Animation",
     message: "Custom fade-in and fade-out animation.",
     type: ToastType.success,
@@ -235,7 +235,7 @@ Toastify.show(
 
 ```dart
 Toastify.show(
-    context: context,
+    context,
     title: "Bounce In",
     message: "This toast uses a bounce entrance.",
     type: ToastType.info,
