@@ -216,7 +216,7 @@ toastId = Toastify.show(
 
 ---
 
-### 🎞️Animation Control Examples (v1.1.0)
+### 🎞️ Animation Control Examples (v1.1.0)
 ### Smooth Fade Animation
 
 ```dart
