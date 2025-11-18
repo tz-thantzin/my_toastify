@@ -18,7 +18,7 @@
 - Modify Readme.md
 
 ## 1.0.0
-### ✨ Major Update
+### ✨ Stable Release
 - Added **onDismiss** callback to handle actions when a toast is dismissed.
 - Introduced **isAutoDismissible** flag to control automatically disappear.
 - Added manual dismissal methods:
@@ -28,3 +28,6 @@
 
 ## 1.0.1
 - Add error handling
+
+## 1.1.0
+- Add custom appear and dismiss animation

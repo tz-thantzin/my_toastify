@@ -19,6 +19,7 @@ Supports banners, snackbars, custom icons, actions, and multiple stacking positi
 - Auto-dismiss with animation
 - Multiple toasts at once
 - Swipe-to-dismiss gesture
+- Customize toast animation
 
 ---
 
@@ -33,24 +34,27 @@ flutter pub add my_toastify
 
 ### ToastDetails
 
-| Property           | Type               | Default                                                                | Description |
-|--------------------|--------------------|------------------------------------------------------------------------|-------------|
-| `id`               | `String`           | `Unique ID generated if not passed`                                    | Toast identifier for dismissing by ID |
-| `message`          | `String`           | —                                                                      | Message text displayed in toast |
-| `title`            | `String?`          | `null`                                                                 | Optional title above message |
-| `type`             | `ToastType`        | `ToastType.info`                                                       | Defines color/icon scheme |
-| `position`         | `ToastPosition`    | `ToastPosition.bottom`                                                 | Where toast appears |
-| `style`            | `ToastStyle`       | `ToastStyle.snackBarStyle`                                             | Toast UI layout |
+| Property           | Type               | Default                                                                  | Description |
+|--------------------|--------------------|--------------------------------------------------------------------------|-------------|
+| `id`               | `String`           | `Unique ID generated if not passed`                                      | Toast identifier for dismissing by ID |
+| `message`          | `String`           | —                                                                        | Message text displayed in toast |
+| `title`            | `String?`          | `null`                                                                   | Optional title above message |
+| `type`             | `ToastType`        | `ToastType.info`                                                         | Defines color/icon scheme |
+| `position`         | `ToastPosition`    | `ToastPosition.bottom`                                                   | Where toast appears |
+| `style`            | `ToastStyle`       | `ToastStyle.snackBarStyle`                                               | Toast UI layout |
 | `titleTextStyle`   | `TextStyle?`       | `Theme.of(context).textTheme.titleMedium!.copyWith(color: Colors.white)` | Custom title style |
-| `messageTextStyle` | `TextStyle?`       | `Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.white)` | Custom message style |
-| `leading`          | `Widget?`          | `null`                                                                 | Optional icon widget |
-| `action`           | `Widget?`          | `null`                                                                 | Optional action button |
-| `backgroundColor`  | `Color?`           | `null`                                                                 | Override default color |
-| `borderColor`      | `Color?`           | `null`                                                                 | Adds custom border |
-| `boxShadow`        | `List<BoxShadow>?` | `null`                                                                 | Shadow customization |
-| `duration`         | `Duration`         | `3 seconds`                                                            | Auto dismiss time |
-| `onDismiss`         | `VoidCallback?`         | `null`                                                                 | Callback when toast is dismissed |
-| `isAutoDismissible`         | `bool`         | `true`                                                                 | Set false to prevent automatic dismissal |
+| `messageTextStyle` | `TextStyle?`       | `Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.white)`  | Custom message style |
+| `leading`          | `Widget?`          | `null`                                                                   | Optional icon widget |
+| `action`           | `Widget?`          | `null`                                                                   | Optional action button |
+| `backgroundColor`  | `Color?`           | `null`                                                                   | Override default color |
+| `borderColor`      | `Color?`           | `null`                                                                   | Adds custom border |
+| `boxShadow`        | `List<BoxShadow>?` | `null`                                                                   | Shadow customization |
+| `duration`         | `Duration`         | `3 seconds`                                                              | Auto dismiss time |
+| `onDismiss`         | `VoidCallback?`         | `null`                                                                   | Callback when toast is dismissed |
+| `isAutoDismissible`         | `bool`         | `true`                                                                   | Set false to prevent automatic dismissal |
+| `animationDuration`         | `Duration`         | `500ms`                                                                  | Duration of entrance/exit animation |
+| `appearCurve`         | `Curve`         | `Curves.easeOutBack`                                                     | Curve for show animation |
+| `dismissCurve`         | `Curve`         | `Curves.easeIn`                                                          | Curve for dismiss animation |
 
 ---
 
@@ -76,7 +80,7 @@ class ToastifyDemo extends StatelessWidget {
           child: ElevatedButton(
             onPressed: () {
               Toastify.show(
-                context: context,
+                context,
                 title: 'Success',
                 message: 'Profile updated successfully!',
                 type: ToastType.success,
@@ -101,7 +105,7 @@ class ToastifyDemo extends StatelessWidget {
 
 ```dart
 Toastify.show(
-  context: context,
+  context,
   title: 'Upload Complete',
   message: 'Your photo has been uploaded successfully.',
   type: ToastType.success,
@@ -117,7 +121,7 @@ Toastify.show(
 
 ```dart
 Toastify.show(
-  context: context,
+  context,
   title: 'File Saved',
   message: 'Document saved to local storage.',
   type: ToastType.success,
@@ -139,7 +143,7 @@ Toastify.show(
 
 ```dart
 Toastify.show(
-  context: context,
+  context,
   title: 'Undo Action',
   message: 'File deleted successfully.',
   type: ToastType.success,
@@ -160,7 +164,7 @@ Toastify.show(
 
 ```dart
 Toastify.show(
-  context: context,
+  context,
   message: 'Settings have been updated.',
   type: ToastType.info,
   position: ToastPosition.bottom,
@@ -170,11 +174,11 @@ Toastify.show(
 
 ---
 
-### With onDismiss Callback
+### 🔔 With onDismiss Callback
 
 ```dart
 Toastify.show(
-  context: context,
+  context,
   title: 'Info',
   message: 'This toast will print when dismissed.',
   type: ToastType.info,
@@ -186,12 +190,12 @@ Toastify.show(
 
 ---
 
-### Non-Auto-Dismiss Toast with Action and dismissById
+### ⏹️ Non-Auto-Dismiss Toast with Action and dismissById
 
 ```dart
 late final String toastId;
 toastId = Toastify.show(
-    context: context,
+    context,
     title: 'Upload File',
     message: 'Uploading in progress...',
     type: ToastType.info,
@@ -207,6 +211,37 @@ toastId = Toastify.show(
         },
         child: const Text('CANCEL', style: TextStyle(color: Colors.white)),
     ),
+);
+```
+
+---
+
+### 🎞️ Animation Control Examples (v1.1.0)
+### Smooth Fade Animation
+
+```dart
+Toastify.show(
+    context,
+    title: "Smooth Animation",
+    message: "Custom fade-in and fade-out animation.",
+    type: ToastType.success,
+    appearCurve: Curves.easeOut,
+    dismissCurve: Curves.easeIn,
+    animationDuration: const Duration(milliseconds: 300),
+);
+```
+
+### Bounce-In Entrance
+
+```dart
+Toastify.show(
+    context,
+    title: "Bounce In",
+    message: "This toast uses a bounce entrance.",
+    type: ToastType.info,
+    appearCurve: Curves.bounceOut,
+    dismissCurve: Curves.easeInExpo,
+    animationDuration: const Duration(milliseconds: 450),
 );
 ```
 
