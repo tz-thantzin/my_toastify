@@ -62,11 +62,11 @@ class _ToastWidgetState extends State<ToastWidget>
 
   Color _backgroundColor() {
     switch (widget.details.type) {
-      case ToastType.error:
+      case .error:
         return Colors.redAccent;
-      case ToastType.warning:
+      case .warning:
         return Colors.orangeAccent;
-      case ToastType.success:
+      case .success:
         return Colors.green;
       default:
         return Colors.blueAccent;
@@ -75,11 +75,11 @@ class _ToastWidgetState extends State<ToastWidget>
 
   Widget _defaultIcon() {
     switch (widget.details.type) {
-      case ToastType.error:
+      case .error:
         return const Icon(Icons.error_outline, color: Colors.white);
-      case ToastType.warning:
+      case .warning:
         return const Icon(Icons.warning_amber_outlined, color: Colors.white);
-      case ToastType.success:
+      case .success:
         return const Icon(Icons.check_circle_outline, color: Colors.white);
       default:
         return const Icon(Icons.info_outline, color: Colors.white);
@@ -138,8 +138,8 @@ class _ToastWidgetState extends State<ToastWidget>
     );
 
     final safeArea = MediaQuery.of(context).viewPadding;
-    final isBanner = details.style == ToastStyle.bannerStyle;
-    final isTop = details.position == ToastPosition.top;
+    final isBanner = details.style == .bannerStyle;
+    final isTop = details.position == .top;
 
     EdgeInsets toastPadding;
     if (isBanner) {
@@ -166,7 +166,7 @@ class _ToastWidgetState extends State<ToastWidget>
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeOut,
             padding: toastPadding,
-            constraints: details.style == ToastStyle.bannerStyle
+            constraints: details.style == .bannerStyle
                 ? const BoxConstraints(
                     minHeight: 120,
                     minWidth: double.infinity,
@@ -177,8 +177,8 @@ class _ToastWidgetState extends State<ToastWidget>
               border: details.borderColor != null
                   ? Border.all(color: details.borderColor!, width: 2)
                   : null,
-              borderRadius: details.style == ToastStyle.bannerStyle
-                  ? (details.position == ToastPosition.top
+              borderRadius: details.style == .bannerStyle
+                  ? (details.position == .top
                         ? const BorderRadius.vertical(
                             bottom: Radius.circular(24),
                           )

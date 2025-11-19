@@ -36,9 +36,9 @@ class ToastDemoPage extends StatelessWidget {
                     context,
                     title: "Success",
                     message: "Data saved successfully!",
-                    type: ToastType.success,
-                    position: ToastPosition.top,
-                    style: ToastStyle.snackBarStyle,
+                    type: .success,
+                    position: .top,
+                    style: .snackBarStyle,
                     duration: const Duration(seconds: 3),
                     onDismiss: () {
                       debugPrint("Toast dismissed!");
@@ -57,9 +57,9 @@ class ToastDemoPage extends StatelessWidget {
                     context,
                     title: "Failed",
                     message: "Failed to save data!",
-                    type: ToastType.error,
-                    position: ToastPosition.bottom,
-                    style: ToastStyle.snackBarStyle,
+                    type: .error,
+                    position: .bottom,
+                    style: .snackBarStyle,
                     duration: const Duration(seconds: 3),
                   );
                 },
@@ -74,9 +74,9 @@ class ToastDemoPage extends StatelessWidget {
                   Toastify.show(
                     context,
                     message: "New message received",
-                    type: ToastType.info,
-                    position: ToastPosition.bottom,
-                    style: ToastStyle.bannerStyle,
+                    type: .info,
+                    position: .bottom,
+                    style: .bannerStyle,
                   );
                 },
                 child: const Text("Show Banner Toast at Bottom"),
@@ -90,9 +90,9 @@ class ToastDemoPage extends StatelessWidget {
                   Toastify.show(
                     context,
                     message: "New message received",
-                    type: ToastType.info,
-                    position: ToastPosition.top,
-                    style: ToastStyle.bannerStyle,
+                    type: .info,
+                    position: .top,
+                    style: .bannerStyle,
                   );
                 },
                 child: const Text("Show Banner Toast on Top"),
@@ -107,9 +107,9 @@ class ToastDemoPage extends StatelessWidget {
                     context,
                     title: "Download",
                     message: "Your file has started downloading",
-                    type: ToastType.info,
-                    position: ToastPosition.bottom,
-                    style: ToastStyle.snackBarStyle,
+                    type: .info,
+                    position: .bottom,
+                    style: .snackBarStyle,
                     leading: const Icon(
                       Icons.cloud_download_outlined,
                       color: Colors.white,
@@ -130,9 +130,9 @@ class ToastDemoPage extends StatelessWidget {
                     context,
                     title: "Undo Delete",
                     message: "Your file was deleted.",
-                    type: ToastType.warning,
-                    position: ToastPosition.bottom,
-                    style: ToastStyle.snackBarStyle,
+                    type: .warning,
+                    position: .bottom,
+                    style: .snackBarStyle,
                     action: TextButton(
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -159,9 +159,9 @@ class ToastDemoPage extends StatelessWidget {
                     context,
                     title: "Update Available",
                     message: "A new version is ready to install.",
-                    type: ToastType.info,
-                    position: ToastPosition.top,
-                    style: ToastStyle.bannerStyle,
+                    type: .info,
+                    position: .top,
+                    style: .bannerStyle,
                     leading: const Icon(
                       Icons.system_update_alt_outlined,
                       color: Colors.white,
@@ -192,9 +192,9 @@ class ToastDemoPage extends StatelessWidget {
                     context,
                     title: "Custom Border",
                     message: "This toast has a white border outline.",
-                    type: ToastType.info,
-                    position: ToastPosition.bottom,
-                    style: ToastStyle.snackBarStyle,
+                    type: .info,
+                    position: .bottom,
+                    style: .snackBarStyle,
                     borderColor: Colors.white,
                     duration: const Duration(seconds: 4),
                   );
@@ -211,9 +211,9 @@ class ToastDemoPage extends StatelessWidget {
                     context,
                     title: "Custom Shadow",
                     message: "This toast has a custom soft shadow.",
-                    type: ToastType.success,
-                    position: ToastPosition.top,
-                    style: ToastStyle.snackBarStyle,
+                    type: .success,
+                    position: .top,
+                    style: .snackBarStyle,
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.5),
@@ -238,9 +238,9 @@ class ToastDemoPage extends StatelessWidget {
                     context,
                     title: "Upload File",
                     message: "Uploading in progress...",
-                    type: ToastType.info,
-                    position: ToastPosition.bottom,
-                    style: ToastStyle.snackBarStyle,
+                    type: .info,
+                    position: .bottom,
+                    style: .snackBarStyle,
                     isAutoDismissible: false,
                     action: TextButton(
                       onPressed: () {
@@ -271,9 +271,9 @@ class ToastDemoPage extends StatelessWidget {
                     context,
                     title: "Upload File",
                     message: "Uploading in progress...",
-                    type: ToastType.info,
-                    position: ToastPosition.top,
-                    style: ToastStyle.bannerStyle,
+                    type: .info,
+                    position: .top,
+                    style: .bannerStyle,
                     isAutoDismissible: false,
                     action: TextButton(
                       onPressed: () {
@@ -304,9 +304,9 @@ class ToastDemoPage extends StatelessWidget {
                     Toastify.show(
                       context,
                       message: "Hi", // Only 2 characters -> triggers exception
-                      type: ToastType.info,
-                      position: ToastPosition.bottom,
-                      style: ToastStyle.snackBarStyle,
+                      type: .info,
+                      position: .bottom,
+                      style: .snackBarStyle,
                     );
                   } catch (e) {
                     debugPrint("Exception:: ${e.toString()}");
@@ -335,9 +335,9 @@ class ToastDemoPage extends StatelessWidget {
                     context,
                     title: "Animated",
                     message: "Custom animation applied!",
-                    type: ToastType.info,
-                    position: ToastPosition.bottom,
-                    style: ToastStyle.snackBarStyle,
+                    type: .info,
+                    position: .bottom,
+                    style: .snackBarStyle,
                     appearCurve: Curves.decelerate,
                     dismissCurve: Curves.easeInCubic,
                     animationDuration: const Duration(milliseconds: 500),

@@ -31,3 +31,6 @@
 
 ## 1.1.0
 - Add custom appear and dismiss animation
+
+## 1.1.1
+- Flutter version upgrade

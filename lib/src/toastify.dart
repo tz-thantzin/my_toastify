@@ -27,13 +27,13 @@ class Toastify {
   /// - **title** *(optional)*:
   ///   An optional title displayed above the message.
   ///
-  /// - **type** *(default: ToastType.info)*:
+  /// - **type** *(default: .info)*:
   ///   Controls color/theme (info, success, warning, error).
   ///
-  /// - **position** *(default: ToastPosition.bottom)*:
+  /// - **position** *(default: .bottom)*:
   ///   Display location: top or bottom.
   ///
-  /// - **style** *(default: ToastStyle.snackBarStyle)*:
+  /// - **style** *(default: .snackBarStyle)*:
   ///   Controls visual layout: snackbar-style, banner-style, etc.
   ///
   /// - **titleTextStyle**, **messageTextStyle** *(optional)*:
@@ -86,9 +86,9 @@ class Toastify {
     required String message,
     String? toastId,
     String? title,
-    ToastType type = ToastType.info,
-    ToastPosition position = ToastPosition.bottom,
-    ToastStyle style = ToastStyle.snackBarStyle,
+    ToastType type = .info,
+    ToastPosition position = .bottom,
+    ToastStyle style = .snackBarStyle,
     TextStyle? titleTextStyle,
     TextStyle? messageTextStyle,
     Widget? leading,
