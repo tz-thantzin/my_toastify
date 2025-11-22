@@ -34,3 +34,4 @@
 
 ## 1.1.1
 - Modify min dart sdk 3.9 to 3.0
+- Optimize source code

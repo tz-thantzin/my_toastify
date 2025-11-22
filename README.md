@@ -33,27 +33,27 @@ $ flutter pub add my_toastify
 
 ### ToastDetails
 
-| Property          | Type               | Default                  | Description                              |
-|-------------------|--------------------|--------------------------|------------------------------------------|
-| id                | String             | Unique ID generated      | Toast identifier for dismissing by ID    |
-| message           | String             | —                        | Message text displayed in toast          |
-| title             | String?            | null                     | Optional title above message             |
-| type              | ToastType          | ToastType.info           | Defines color/icon scheme                |
-| position          | ToastPosition      | ToastPosition.bottom     | Where toast appears                      |
-| style             | ToastStyle         | ToastStyle.snackBarStyle | Toast UI layout                          |
-| titleTextStyle    | TextStyle?         | textTheme.titleMedium    | Custom title style                       |
-| messageTextStyle  | TextStyle?         | textTheme.bodyMedium     | Custom message style                     |
-| leading           | Widget?            | null                     | Optional icon widget                     |
-| action            | Widget?            | null                     | Optional action button                   |
-| backgroundColor   | Color?             | null                     | Override default color                   |
-| borderColor       | Color?             | null                     | Adds custom border                       |
-| boxShadow         | List<BoxShadow>?   | null                     | Shadow customization                     |
-| duration          | Duration           | 3 seconds                | Auto dismiss time                        |
-| onDismiss         | VoidCallback?      | null                     | Callback when toast is dismissed         |
-| isAutoDismissible | bool               | true                     | Set false to prevent automatic dismissal |
-| animationDuration | Duration           | 500ms                    | Duration of entrance/exit animation      |
-| appearCurve       | Curve              | Curves.easeOutBack       | Curve for show animation                 |
-| dismissCurve      | Curve              | Curves.easeIn            | Curve for dismiss animation              |
+| Property          | Type               | Default               | Description                              |
+|-------------------|--------------------|-----------------------|------------------------------------------|
+| id                | String             | Unique ID generated   | Toast identifier for dismissing by ID    |
+| message           | String             | —                     | Message text displayed in toast          |
+| title             | String?            | null                  | Optional title above message             |
+| type              | ToastType          | ToastType.info        | Defines color/icon scheme                |
+| position          | ToastPosition      | ToastPosition.bottom  | Where toast appears                      |
+| style             | ToastStyle         | ToastStyle.snackBar   | Toast UI layout                          |
+| titleTextStyle    | TextStyle?         | textTheme.titleMedium | Custom title style                       |
+| messageTextStyle  | TextStyle?         | textTheme.bodyMedium  | Custom message style                     |
+| leading           | Widget?            | null                  | Optional icon widget                     |
+| action            | Widget?            | null                  | Optional action button                   |
+| backgroundColor   | Color?             | null                  | Override default color                   |
+| borderColor       | Color?             | null                  | Adds custom border                       |
+| boxShadow         | List<BoxShadow>?   | null                  | Shadow customization                     |
+| duration          | Duration           | 3 seconds             | Auto dismiss time                        |
+| onDismiss         | VoidCallback?      | null                  | Callback when toast is dismissed         |
+| isAutoDismissible | bool               | true                  | Set false to prevent automatic dismissal |
+| animationDuration | Duration           | 500ms                 | Duration of entrance/exit animation      |
+| appearCurve       | Curve              | Curves.easeOutBack    | Curve for show animation                 |
+| dismissCurve      | Curve              | Curves.easeIn         | Curve for dismiss animation              |
 
 
 ---
@@ -85,7 +85,7 @@ class ToastifyDemo extends StatelessWidget {
                 message: 'Profile updated successfully!',
                 type: ToastType.success,
                 position: ToastPosition.top,
-                style: ToastStyle.bannerStyle,
+                style: ToastStyle.banner,
               );
             },
             child: const Text('Show Toast'),
@@ -110,7 +110,7 @@ Toastify.show(
   message: 'Your photo has been uploaded successfully.',
   type: ToastType.success,
   position: ToastPosition.bottom,
-  style: ToastStyle.snackBarStyle,
+  style: ToastStyle.snackBar,
   leading: const Icon(Icons.check_circle, color: Colors.white),
 );
 ```
@@ -126,7 +126,7 @@ Toastify.show(
   message: 'Document saved to local storage.',
   type: ToastType.success,
   position: ToastPosition.bottom,
-  style: ToastStyle.snackBarStyle,
+  style: ToastStyle.snackBar,
   boxShadow: [
     BoxShadow(
       color: Colors.black.withOpacity(0.3),
@@ -148,7 +148,7 @@ Toastify.show(
   message: 'File deleted successfully.',
   type: ToastType.success,
   position: ToastPosition.bottom,
-  style: ToastStyle.snackBarStyle,
+  style: ToastStyle.snackBar,
   action: TextButton(
     onPressed: () {
       debugPrint('Undo pressed');
@@ -168,7 +168,7 @@ Toastify.show(
   message: 'Settings have been updated.',
   type: ToastType.info,
   position: ToastPosition.bottom,
-  style: ToastStyle.snackBarStyle,
+  style: ToastStyle.snackBar,
 );
 ```
 
@@ -200,7 +200,7 @@ toastId = Toastify.show(
     message: 'Uploading in progress...',
     type: ToastType.info,
     position: ToastPosition.bottom,
-    style: ToastStyle.snackBarStyle,
+    style: ToastStyle.snackBar,
     isAutoDismissible: false,
     action: TextButton(
         onPressed: () {
