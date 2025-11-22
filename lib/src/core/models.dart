@@ -1,4 +1,4 @@
-part of '../toastify_core.dart';
+part of '../toastify.dart';
 
 class ToastDetails {
   final String id;
@@ -15,20 +15,19 @@ class ToastDetails {
   final Color? borderColor;
   final List<BoxShadow>? boxShadow;
   final Duration duration;
+  final Duration animationDuration;
+  final Curve appearCurve;
+  final Curve dismissCurve;
   final VoidCallback? onDismiss;
   final bool isAutoDismissible;
 
-  final Duration animationDuration; // V.1.1.0
-  final Curve appearCurve; // V.1.1.0
-  final Curve dismissCurve; // V.1.1.0
-
-  ToastDetails({
+  const ToastDetails({
     required this.id,
     required this.message,
     this.title,
     this.type = ToastType.info,
     this.position = ToastPosition.bottom,
-    this.style = ToastStyle.snackBarStyle,
+    this.style = ToastStyle.snackBar,
     this.titleTextStyle,
     this.messageTextStyle,
     this.leading,
@@ -37,10 +36,26 @@ class ToastDetails {
     this.borderColor,
     this.boxShadow,
     this.duration = const Duration(seconds: 3),
+    this.animationDuration = const Duration(milliseconds: 400),
+    this.appearCurve = Curves.easeOutBack,
+    this.dismissCurve = Curves.easeInBack,
     this.onDismiss,
     this.isAutoDismissible = true,
-    this.animationDuration = const Duration(milliseconds: 500),
-    this.appearCurve = Curves.easeOutBack,
-    this.dismissCurve = Curves.easeIn,
+  });
+}
+
+class _ToastQueueEntry {
+  final String id;
+  final OverlayEntry entry;
+  final ToastStyle style;
+  final ToastPosition position;
+  final DateTime createdAt;
+
+  _ToastQueueEntry({
+    required this.id,
+    required this.entry,
+    required this.style,
+    required this.position,
+    required this.createdAt,
   });
 }

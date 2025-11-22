@@ -31,3 +31,7 @@
 
 ## 1.1.0
 - Add custom appear and dismiss animation
+
+## 1.1.1
+- Modify min dart sdk 3.9 to 3.0
+- Optimize source code
