@@ -33,4 +33,4 @@
 - Add custom appear and dismiss animation
 
 ## 1.1.1
-- Flutter version upgrade
+- Modify min dart sdk 3.9 to 3.0

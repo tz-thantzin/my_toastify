@@ -7,7 +7,7 @@ issue_tracker: https://github.com/tz-thantzin/my_toastify/issues
 maintainer: ThantZin (@tz-thantzin)
 
 environment:
-  sdk: ^3.10.0
+  sdk: ">=3.0.0 <4.0.0"
   flutter: ">=1.17.0"
 
 dependencies:

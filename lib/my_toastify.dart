@@ -1,1 +1,3 @@
-export 'src/toastify_core.dart' hide ToastDetails, ToastEntry, ToastWidget;
+library;
+
+export 'src/toastify.dart';

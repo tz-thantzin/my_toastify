@@ -1,8 +1,7 @@
+# my_toastify
 [![pub package](https://img.shields.io/pub/v/my_toastify.svg)](https://pub.dev/packages/my_toastify) &nbsp;
 [![GitHub license](https://img.shields.io/github/license/tz-thantzin/my_toastify)](https://github.com/tz-thantzin/my_toastify/blob/main/LICENSE) &nbsp;
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-donate-yellow.svg)](https://buymeacoffee.com/devthantziq)
-
-# Toastify
 
 A beautiful, customizable **toast notification system** for Flutter.  
 Supports banners, snackbars, custom icons, actions, and multiple stacking positions.
@@ -25,7 +24,7 @@ Supports banners, snackbars, custom icons, actions, and multiple stacking positi
 
 ## 📦 Installation
 ```bash
-flutter pub add my_toastify
+$ flutter pub add my_toastify
 ```
 
 ---
@@ -84,9 +83,9 @@ class ToastifyDemo extends StatelessWidget {
                 context,
                 title: 'Success',
                 message: 'Profile updated successfully!',
-                type: .success,
-                position: .top,
-                style: .bannerStyle,
+                type: ToastType.success,
+                position: ToastPosition.top,
+                style: ToastStyle.bannerStyle,
               );
             },
             child: const Text('Show Toast'),
@@ -109,9 +108,9 @@ Toastify.show(
   context,
   title: 'Upload Complete',
   message: 'Your photo has been uploaded successfully.',
-  type: .success,
-  position: .bottom,
-  style: .snackBarStyle,
+  type: ToastType.success,
+  position: ToastPosition.bottom,
+  style: ToastStyle.snackBarStyle,
   leading: const Icon(Icons.check_circle, color: Colors.white),
 );
 ```
@@ -125,9 +124,9 @@ Toastify.show(
   context,
   title: 'File Saved',
   message: 'Document saved to local storage.',
-  type: .success,
-  position: .bottom,
-  style: .snackBarStyle,
+  type: ToastType.success,
+  position: ToastPosition.bottom,
+  style: ToastStyle.snackBarStyle,
   boxShadow: [
     BoxShadow(
       color: Colors.black.withOpacity(0.3),
@@ -147,9 +146,9 @@ Toastify.show(
   context,
   title: 'Undo Action',
   message: 'File deleted successfully.',
-  type: .success,
-  position: .bottom,
-  style: .snackBarStyle,
+  type: ToastType.success,
+  position: ToastPosition.bottom,
+  style: ToastStyle.snackBarStyle,
   action: TextButton(
     onPressed: () {
       debugPrint('Undo pressed');
@@ -167,9 +166,9 @@ Toastify.show(
 Toastify.show(
   context,
   message: 'Settings have been updated.',
-  type: .info,
-  position: .bottom,
-  style: .snackBarStyle,
+  type: ToastType.info,
+  position: ToastPosition.bottom,
+  style: ToastStyle.snackBarStyle,
 );
 ```
 
@@ -182,7 +181,7 @@ Toastify.show(
   context,
   title: 'Info',
   message: 'This toast will print when dismissed.',
-  type: .info,
+  type: ToastType.info,
   onDismiss: () {
     debugPrint('Toast was dismissed!');
   },
@@ -199,9 +198,9 @@ toastId = Toastify.show(
     context,
     title: 'Upload File',
     message: 'Uploading in progress...',
-    type: .info,
-    position: .bottom,
-    style: .snackBarStyle,
+    type: ToastType.info,
+    position: ToastPosition.bottom,
+    style: ToastStyle.snackBarStyle,
     isAutoDismissible: false,
     action: TextButton(
         onPressed: () {
@@ -225,7 +224,7 @@ Toastify.show(
     context,
     title: "Smooth Animation",
     message: "Custom fade-in and fade-out animation.",
-    type: .success,
+    type: ToastType.success,
     appearCurve: Curves.easeOut,
     dismissCurve: Curves.easeIn,
     animationDuration: const Duration(milliseconds: 300),
@@ -239,7 +238,7 @@ Toastify.show(
     context,
     title: "Bounce In",
     message: "This toast uses a bounce entrance.",
-    type: .info,
+    type: ToastType.info,
     appearCurve: Curves.bounceOut,
     dismissCurve: Curves.easeInExpo,
     animationDuration: const Duration(milliseconds: 450),
