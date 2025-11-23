@@ -1,0 +1,20 @@
+name: my_toastify
+description: "A customizable toast notification system for Flutter. Supports banners, snackbars, and advanced styling."
+version: 1.1.2
+homepage: https://github.com/tz-thantzin/my_toastify
+repository: https://github.com/tz-thantzin/my_toastify
+issue_tracker: https://github.com/tz-thantzin/my_toastify/issues
+maintainer: ThantZin (@tz-thantzin)
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0

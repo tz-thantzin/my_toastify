@@ -1,0 +1,47 @@
+include: package:lints/recommended.yaml
+
+analyzer:
+  errors:
+    missing_return: error
+    must_be_immutable: error
+    must_call_super: error
+    invalid_use_of_protected_member: error
+    parameter_assignments: error
+    sort_unnamed_constructors_first: error
+    sort_pub_dependencies: ignore
+    always_use_package_imports: error
+    invalid_annotation_target: ignore
+    type_annotate_public_apis: false
+    use_build_context_synchronously: warning
+
+linter:
+  rules:
+    - public_member_api_docs
+
+    - library_private_types_in_public_api
+    - avoid_relative_lib_imports
+    - prefer_relative_imports
+    - unnecessary_getters_setters
+    - unnecessary_overrides
+    - prefer_single_quotes
+    - prefer_expression_function_bodies
+    - avoid_print
+    - always_declare_return_types
+
+fix:
+  data:
+    - always_put_required_named_parameters_first
+    - avoid_redundant_argument_values
+    - prefer_const_constructors
+    - use_key_in_widget_constructors
+
+dart:
+  code-actions-on-save:
+    source:
+      fix-all: true
+      organize-imports: true
+  fix-on-save:
+    - implicit-casts: false
+  fix:
+    sort-members: true
+    use-rational-asserts: true
