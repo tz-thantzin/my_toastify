@@ -2,7 +2,7 @@
 ///
 /// Toastify provides rich toast styles (snack-bar & full-width banner),
 /// stacking behaviour, swipe-to-dismiss, custom icons/actions, theming,
-/// and fine-grained control over position, duration and animations.
+/// and fine-grained control over position, duration, width and alignment.
 ///
 /// ## Features
 /// - Multiple toast styles: `ToastStyle.snackBar` and `ToastStyle.banner`
@@ -10,7 +10,7 @@
 /// - Top or bottom positioning
 /// - Auto-dismiss with custom duration
 /// - Swipe horizontally to dismiss
-/// - Custom leading widget, action widget, colors, shadows, curves, etc.
+/// - Custom leading widget, action widget, colors, shadows, curves and layout
 /// - Full control: dismiss by id, dismiss first/last, dismiss all
 ///
 /// ## Quick example

@@ -20,42 +20,9 @@ class Toastify {
   /// Returns the toast’s unique identifier (either the supplied [toastId] or an
   /// auto-generated one). The returned id can be used with [dismissById].
   ///
-  /// Throws a [ToastifyException] if the [context] is not mounted or if the
-  /// [message] is empty/whitespace-only or shorter than 5 characters.
-  ///
-  /// ### Parameters
-  ///
-  /// @param context               The BuildContext used to insert the overlay.
-  /// @param message               The main text content of the toast. Must be ≥ 5 characters.
-  /// @param toastId               Optional custom identifier. If omitted, a unique id is generated.
-  /// @param title                 Optional bold title displayed above the message.
-  /// @param type                  Semantic type that sets default color and icon (info, success, warning, error).
-  /// @param position              Screen position – [ToastPosition.top] or [ToastPosition.bottom].
-  /// @param style                 Visual style – [ToastStyle.snackBar] (compact) or [ToastStyle.banner] (full-width).
-  /// @param titleTextStyle        Custom style for the title; falls back to theme-based style.
-  /// @param messageTextStyle      Custom style for the message; falls back to theme-based style.
-  /// @param leading               Optional widget shown on the left (replaces default type icon).
-  /// @param action                Optional trailing widget (e.g., a button).
-  /// @param backgroundColor       Explicit background color. Overrides color derived from [type].
-  /// @param borderColor           Reserved for future use (currently unused).
-  /// @param boxShadow             Custom shadow list. If `null`, a default shadow is applied.
-  /// @param duration              How long the toast stays visible when [isAutoDismissible] is true.
-  /// @param appearCurve           Animation curve for the enter transition.
-  /// @param dismissCurve          Animation curve for the exit transition.
-  /// @param animationDuration     Duration of enter/exit animations.
-  /// @param onDismiss             Callback invoked after the toast is fully removed.
-  /// @param isAutoDismissible     If `false`, the toast stays until manually dismissed.
-  ///
-  /// ### Example
-  /// ```dart
-  /// Toastify.show(
-  ///   context,
-  ///   message: 'Profile updated successfully!',
-  ///   type: ToastType.success,
-  ///   style: ToastStyle.banner,
-  ///   position: ToastPosition.top,
-  /// );
-  /// ```
+  /// Throws a [ToastifyException] if the [context] is not mounted, if the
+  /// [message] is empty/whitespace-only or shorter than 5 characters, or if
+  /// [widthFactor] / [maxWidth] contain invalid values.
   static String show(
     BuildContext context, {
     required String message,
@@ -71,6 +38,10 @@ class Toastify {
     Color? backgroundColor,
     Color? borderColor,
     List<BoxShadow>? boxShadow,
+    double? widthFactor,
+    double? maxWidth,
+    ToastHorizontalAlignment horizontalAlignment =
+        ToastHorizontalAlignment.stretch,
     Duration duration = const Duration(seconds: 3),
     Curve appearCurve = Curves.easeOutBack,
     Curve dismissCurve = Curves.easeInBack,
@@ -91,6 +62,16 @@ class Toastify {
       );
     }
 
+    if (widthFactor != null && (widthFactor <= 0 || widthFactor > 1)) {
+      throw ToastifyException(
+        'widthFactor must be greater than 0 and less than or equal to 1.',
+      );
+    }
+
+    if (maxWidth != null && maxWidth <= 0) {
+      throw ToastifyException('maxWidth must be greater than 0.');
+    }
+
     final id = toastId ?? DateTime.now().microsecondsSinceEpoch.toString();
 
     final details = ToastDetails(
@@ -107,6 +88,9 @@ class Toastify {
       backgroundColor: backgroundColor,
       borderColor: borderColor,
       boxShadow: boxShadow,
+      widthFactor: widthFactor,
+      maxWidth: maxWidth,
+      horizontalAlignment: horizontalAlignment,
       duration: duration,
       appearCurve: appearCurve,
       dismissCurve: dismissCurve,

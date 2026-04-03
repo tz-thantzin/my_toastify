@@ -13,7 +13,8 @@ Supports banners, snackbars, custom icons, actions, and multiple stacking positi
 ## 🚀 Features
 - Overlay-based toast notifications
 - Top or bottom stacking
-- Two styles: **snackBarStyle** & **bannerStyle**
+- Two styles: **snackBar** & **banner**
+- Optional width + alignment controls for web and desktop layouts
 - Custom icons, actions, and colors
 - Auto-dismiss with animation
 - Multiple toasts at once
@@ -48,6 +49,9 @@ $ flutter pub add my_toastify
 | backgroundColor   | Color?           | null                  | Override default color                   |
 | borderColor       | Color?           | null                  | Adds custom border                       |
 | boxShadow         | List<BoxShadow>? | null                  | Shadow customization                     |
+| widthFactor       | double?          | null                  | Fraction of available width to occupy    |
+| maxWidth          | double?          | null                  | Maximum toast width                      |
+| horizontalAlignment | ToastHorizontalAlignment | stretch       | Horizontal placement within overlay      |
 | duration          | Duration         | 3 seconds             | Auto dismiss time                        |
 | onDismiss         | VoidCallback?    | null                  | Callback when toast is dismissed         |
 | isAutoDismissible | bool             | true                  | Set false to prevent automatic dismissal |
@@ -211,6 +215,25 @@ toastId = Toastify.show(
         },
         child: const Text('CANCEL', style: TextStyle(color: Colors.white)),
     ),
+);
+```
+
+---
+
+### 🌐 Half-width bottom-right banner on web
+
+```dart
+Toastify.show(
+  context,
+  title: 'Web Layout',
+  message: 'Half-width banner pinned to the bottom-right on web.',
+  type: ToastType.info,
+  position: ToastPosition.bottom,
+  style: ToastStyle.banner,
+  widthFactor: kIsWeb ? 0.5 : null,
+  horizontalAlignment: kIsWeb
+      ? ToastHorizontalAlignment.end
+      : ToastHorizontalAlignment.stretch,
 );
 ```
 
