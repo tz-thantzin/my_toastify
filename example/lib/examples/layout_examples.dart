@@ -7,11 +7,13 @@ List<DemoSection> buildLayoutDemoSections() {
   return [
     DemoSection(
       title: 'Layout controls',
-      description: 'Examples focused on width, max width and horizontal placement.',
+      description:
+          'Examples focused on width, max width and horizontal placement.',
       examples: [
         DemoExample(
           title: 'Bottom-right half-width banner',
-          description: 'Great for desktop and web layouts where a full-width banner feels too heavy.',
+          description:
+              'Great for desktop and web layouts where a full-width banner feels too heavy.',
           note: 'Uses widthFactor: 0.5 and horizontalAlignment.end.',
           onRun: (context) {
             Toastify.show(
@@ -22,13 +24,16 @@ List<DemoSection> buildLayoutDemoSections() {
               position: ToastPosition.bottom,
               style: ToastStyle.banner,
               widthFactor: kIsWeb ? 0.5 : null,
-              horizontalAlignment: kIsWeb ? ToastHorizontalAlignment.end : ToastHorizontalAlignment.stretch,
+              horizontalAlignment: kIsWeb
+                  ? ToastHorizontalAlignment.end
+                  : ToastHorizontalAlignment.stretch,
             );
           },
         ),
         DemoExample(
           title: 'Centered 60% banner',
-          description: 'A balanced promotional or announcement layout on large screens.',
+          description:
+              'A balanced promotional or announcement layout on large screens.',
           note: 'Pairs widthFactor with center alignment.',
           onRun: (context) {
             Toastify.show(
@@ -45,7 +50,8 @@ List<DemoSection> buildLayoutDemoSections() {
         ),
         DemoExample(
           title: 'Right-aligned snackbar with max width',
-          description: 'Lets desktop toasts stay readable without stretching too wide.',
+          description:
+              'Lets desktop toasts stay readable without stretching too wide.',
           note: 'Uses maxWidth instead of a fractional width.',
           onRun: (context) {
             Toastify.show(

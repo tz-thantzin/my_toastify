@@ -109,6 +109,8 @@ class _ToastQueueEntry {
   final ToastStyle style;
   final ToastPosition position;
   final DateTime createdAt;
+  Timer? dismissTimer;
+  VoidCallback? mountedStateListener;
 
   _ToastQueueEntry({
     required this.id,

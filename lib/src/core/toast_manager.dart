@@ -29,11 +29,23 @@ class _ToastManager {
       createdAt: DateTime.now(),
     );
 
+    queueEntry.mountedStateListener = () {
+      if (entry.mounted) {
+        return;
+      }
+
+      entry.removeListener(queueEntry.mountedStateListener!);
+      queueEntry.dismissTimer?.cancel();
+      _entries.removeWhere((e) => e.entry == entry);
+    };
+
+    entry.addListener(queueEntry.mountedStateListener!);
+
     _entries.add(queueEntry);
     overlay.insert(entry);
 
     if (details.isAutoDismissible) {
-      Timer(details.duration, () {
+      queueEntry.dismissTimer = Timer(details.duration, () {
         if (_entries.any((e) => e.entry == entry && entry.mounted)) {
           _remove(entry, details.onDismiss);
         }
@@ -45,7 +57,11 @@ class _ToastManager {
     final index = _entries.indexWhere((e) => e.entry == entry);
     if (index == -1) return;
 
-    _entries.removeAt(index);
+    final removedEntry = _entries.removeAt(index);
+    removedEntry.dismissTimer?.cancel();
+    if (removedEntry.mountedStateListener != null) {
+      entry.removeListener(removedEntry.mountedStateListener!);
+    }
     if (entry.mounted) {
       entry.remove();
     }
@@ -75,9 +91,14 @@ class _ToastManager {
 
   void dismissAll({bool animated = true}) {
     for (final e in List.of(_entries)) {
+      e.dismissTimer?.cancel();
+      if (e.mountedStateListener != null) {
+        e.entry.removeListener(e.mountedStateListener!);
+      }
+
       if (animated && e.entry.mounted) {
         e.entry.markNeedsBuild(); // trigger exit animation
-      } else {
+      } else if (e.entry.mounted) {
         e.entry.remove();
       }
     }

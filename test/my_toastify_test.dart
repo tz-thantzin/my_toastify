@@ -11,26 +11,24 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Builder(
-          builder: (context) {
-            return Scaffold(
-              body: Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    Toastify.show(
-                      context,
-                      title: 'Web Layout',
-                      message: 'Half-width toast aligned to the right.',
-                      style: ToastStyle.banner,
-                      position: ToastPosition.bottom,
-                      widthFactor: 0.5,
-                      horizontalAlignment: ToastHorizontalAlignment.end,
-                    );
-                  },
-                  child: const Text('Show'),
-                ),
+          builder: (context) => Scaffold(
+            body: Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  Toastify.show(
+                    context,
+                    title: 'Web Layout',
+                    message: 'Half-width toast aligned to the right.',
+                    style: ToastStyle.banner,
+                    position: ToastPosition.bottom,
+                    widthFactor: 0.5,
+                    horizontalAlignment: ToastHorizontalAlignment.end,
+                  );
+                },
+                child: const Text('Show'),
               ),
-            );
-          },
+            ),
+          ),
         ),
       ),
     );
@@ -41,6 +39,9 @@ void main() {
 
     expect(find.text('Web Layout'), findsOneWidget);
     expect(find.text('Half-width toast aligned to the right.'), findsOneWidget);
+
+    Toastify.dismissAll();
+    await tester.pumpAndSettle();
   });
 
   testWidgets('rejects invalid widthFactor', (tester) async {

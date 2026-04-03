@@ -74,7 +74,7 @@ List<DemoSection> buildCustomizationDemoSections() {
               borderColor: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.28),
+                  color: Colors.black.withValues(alpha: 0.28),
                   blurRadius: 20,
                   spreadRadius: 2,
                   offset: const Offset(0, 8),

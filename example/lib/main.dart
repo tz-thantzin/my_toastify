@@ -105,7 +105,7 @@ class _DemoExampleTile extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Material(
-      color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.35),
+      color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
       borderRadius: BorderRadius.circular(16),
       child: Padding(
         padding: const EdgeInsets.all(16),

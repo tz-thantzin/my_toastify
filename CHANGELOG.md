@@ -14,6 +14,8 @@
 - Applied `borderColor` and `boxShadow` consistently to toast decoration.
 - Fixed the web/banner layout flow for half-width bottom-right placement.
 - Fixed the syntax issue in `toast_widget.dart` that caused web compilation to fail.
+- Fixed remaining auto-dismiss timers when overlay entries are disposed externally, improving widget test stability.
+- Fixed pending auto-dismiss timers so widget tests can dispose toast overlays cleanly after manual dismissal.
 
 ## 1.1.2
 - Add API description.

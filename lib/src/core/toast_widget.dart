@@ -165,26 +165,24 @@ class _AnimatedToast extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: fade,
-      child: SlideTransition(
-        position: slide,
-        child: Transform.scale(
-          scale: scale,
-          alignment: position == ToastPosition.top
-              ? Alignment.topCenter
-              : Alignment.bottomCenter,
-          child: Dismissible(
-            key: ValueKey(id),
-            direction: DismissDirection.horizontal,
-            onDismissed: (_) => onDismissed(),
-            child: child,
+  Widget build(BuildContext context) => FadeTransition(
+        opacity: fade,
+        child: SlideTransition(
+          position: slide,
+          child: Transform.scale(
+            scale: scale,
+            alignment: position == ToastPosition.top
+                ? Alignment.topCenter
+                : Alignment.bottomCenter,
+            child: Dismissible(
+              key: ValueKey(id),
+              direction: DismissDirection.horizontal,
+              onDismissed: (_) => onDismissed(),
+              child: child,
+            ),
           ),
         ),
-      ),
-    );
-  }
+      );
 }
 
 class _ToastLayoutResolver {
