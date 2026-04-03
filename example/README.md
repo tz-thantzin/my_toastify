@@ -1,16 +1,15 @@
-# example
+# Toastify example app
 
-A new Flutter project.
+This example app is organized as a small catalog of copy-paste friendly toast scenarios.
 
-## Getting Started
+## File structure
 
-This project is a starting point for a Flutter application.
+- `lib/main.dart` – demo shell and sectioned UI
+- `lib/examples/basic_examples.dart` – baseline snackbar and banner patterns
+- `lib/examples/layout_examples.dart` – width/alignment examples including bottom-right half-width web usage
+- `lib/examples/customization_examples.dart` – leading widgets, actions, border/shadow and persistent toasts
+- `lib/examples/demo_catalog.dart` – shared demo models used by the catalog UI
 
-A few resources to get you started if this is your first Flutter project:
+## Why this layout
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+The example code is split by concern so package users can quickly lift only the scenario they need instead of scanning one very long `main.dart` file.

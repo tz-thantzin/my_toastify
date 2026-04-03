@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:my_toastify/my_toastify.dart';
 
+import 'examples/basic_examples.dart';
+import 'examples/customization_examples.dart';
+import 'examples/demo_catalog.dart';
+import 'examples/layout_examples.dart';
+
 void main() => runApp(const ToastifyDemoApp());
 
 class ToastifyDemoApp extends StatelessWidget {
@@ -10,7 +15,12 @@ class ToastifyDemoApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Toastify Demo',
-      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.blue),
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.blue,
+        cardTheme: const CardThemeData(margin: EdgeInsets.zero),
+      ),
       home: const ToastDemoPage(),
     );
   }
@@ -21,332 +31,122 @@ class ToastDemoPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final sections = <DemoSection>[
+      ...buildBasicDemoSections(),
+      ...buildLayoutDemoSections(),
+      ...buildCustomizationDemoSections(),
+    ];
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Toastify Demo')),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // ✅ Basic Toast (Top Snackbar)
-              ElevatedButton(
-                onPressed: () {
-                  Toastify.show(
-                    context,
-                    title: "Success",
-                    message: "Data saved successfully!",
-                    type: ToastType.success,
-                    position: ToastPosition.top,
-                    style: ToastStyle.snackBar,
-                    duration: const Duration(seconds: 3),
-                    onDismiss: () {
-                      debugPrint("Toast dismissed!");
-                    },
-                  );
-                },
-                child: const Text("Show Top Snackbar Toast"),
-              ),
-
-              const SizedBox(height: 20),
-
-              // ✅ Basic Toast (Bottom Snackbar)
-              ElevatedButton(
-                onPressed: () {
-                  Toastify.show(
-                    context,
-                    title: "Failed",
-                    message: "Failed to save data!",
-                    type: ToastType.error,
-                    position: ToastPosition.bottom,
-                    style: ToastStyle.snackBar,
-                    duration: const Duration(seconds: 3),
-                  );
-                },
-                child: const Text("Show Bottom Snackbar Toast"),
-              ),
-
-              const SizedBox(height: 20),
-
-              // ✅ Banner-style bottom toast
-              ElevatedButton(
-                onPressed: () {
-                  Toastify.show(
-                    context,
-                    message: "New message received",
-                    type: ToastType.info,
-                    position: ToastPosition.bottom,
-                    style: ToastStyle.banner,
-                  );
-                },
-                child: const Text("Show Banner Toast at Bottom"),
-              ),
-
-              const SizedBox(height: 20),
-
-              // ✅ Banner-style top toast
-              ElevatedButton(
-                onPressed: () {
-                  Toastify.show(
-                    context,
-                    message: "New message received",
-                    type: ToastType.info,
-                    position: ToastPosition.top,
-                    style: ToastStyle.banner,
-                  );
-                },
-                child: const Text("Show Banner Toast on Top"),
-              ),
-
-              const Divider(height: 40, thickness: 1),
-
-              // ✅ Toast with custom leading icon
-              ElevatedButton(
-                onPressed: () {
-                  Toastify.show(
-                    context,
-                    title: "Download",
-                    message: "Your file has started downloading",
-                    type: ToastType.info,
-                    position: ToastPosition.bottom,
-                    style: ToastStyle.snackBar,
-                    leading: const Icon(
-                      Icons.cloud_download_outlined,
-                      color: Colors.white,
-                      size: 28,
-                    ),
-                    duration: const Duration(seconds: 4),
-                  );
-                },
-                child: const Text("Show Toast with Custom Leading Icon"),
-              ),
-
-              const SizedBox(height: 20),
-
-              // ✅ Toast with action button
-              ElevatedButton(
-                onPressed: () {
-                  Toastify.show(
-                    context,
-                    title: "Undo Delete",
-                    message: "Your file was deleted.",
-                    type: ToastType.warning,
-                    position: ToastPosition.bottom,
-                    style: ToastStyle.snackBar,
-                    action: TextButton(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Undo Clicked")),
-                        );
-                      },
-                      child: const Text(
-                        "UNDO",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    duration: const Duration(seconds: 5),
-                  );
-                },
-                child: const Text("Show Toast with Action Button"),
-              ),
-
-              const SizedBox(height: 20),
-
-              // ✅ Toast with custom leading + action together
-              ElevatedButton(
-                onPressed: () {
-                  Toastify.show(
-                    context,
-                    title: "Update Available",
-                    message: "A new version is ready to install.",
-                    type: ToastType.info,
-                    position: ToastPosition.top,
-                    style: ToastStyle.banner,
-                    leading: const Icon(
-                      Icons.system_update_alt_outlined,
-                      color: Colors.white,
-                    ),
-                    action: TextButton(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Update started...")),
-                        );
-                      },
-                      child: const Text(
-                        "UPDATE",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    duration: const Duration(seconds: 6),
-                  );
-                },
-                child: const Text("Show Toast with Leading + Action"),
-              ),
-
-              const Divider(height: 40, thickness: 1),
-
-              // ✅ Toast with custom border color
-              ElevatedButton(
-                onPressed: () {
-                  Toastify.show(
-                    context,
-                    title: "Custom Border",
-                    message: "This toast has a white border outline.",
-                    type: ToastType.info,
-                    position: ToastPosition.bottom,
-                    style: ToastStyle.snackBar,
-                    borderColor: Colors.white,
-                    duration: const Duration(seconds: 4),
-                  );
-                },
-                child: const Text("Show Toast with Border Color"),
-              ),
-
-              const SizedBox(height: 20),
-
-              // ✅ Toast with custom shadow
-              ElevatedButton(
-                onPressed: () {
-                  Toastify.show(
-                    context,
-                    title: "Custom Shadow",
-                    message: "This toast has a custom soft shadow.",
-                    type: ToastType.success,
-                    position: ToastPosition.top,
-                    style: ToastStyle.snackBar,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.5),
-                        blurRadius: 20,
-                        spreadRadius: 4,
-                        offset: const Offset(0, 6),
-                      ),
-                    ],
-                    duration: const Duration(seconds: 4),
-                  );
-                },
-                child: const Text("Show Toast with Custom Shadow"),
-              ),
-
-              const Divider(height: 40, thickness: 1),
-              // ✅ Toast without auto-dismiss and cancelable via action button
-              ElevatedButton(
-                onPressed: () {
-                  late final String toastId;
-                  // Show toast without auto-dismiss
-                  toastId = Toastify.show(
-                    context,
-                    title: "Upload File",
-                    message: "Uploading in progress...",
-                    type: ToastType.info,
-                    position: ToastPosition.bottom,
-                    style: ToastStyle.snackBar,
-                    isAutoDismissible: false,
-                    action: TextButton(
-                      onPressed: () {
-                        // Dismiss this toast by its ID
-                        Toastify.dismissById(toastId);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Upload canceled")),
-                        );
-                      },
-                      child: const Text(
-                        "CANCEL",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  );
-                },
-                child: const Text("Show Non-Auto-Dismiss Toast with Action"),
-              ),
-
-              const SizedBox(height: 20),
-
-              // ✅ Toast without auto-dismiss and cancelable via action button
-              ElevatedButton(
-                onPressed: () {
-                  late final String toastId;
-                  // Show toast without auto-dismiss
-                  toastId = Toastify.show(
-                    context,
-                    title: "Upload File",
-                    message: "Uploading in progress...",
-                    type: ToastType.info,
-                    position: ToastPosition.top,
-                    style: ToastStyle.banner,
-                    isAutoDismissible: false,
-                    action: TextButton(
-                      onPressed: () {
-                        // Dismiss this toast by its ID
-                        Toastify.dismissById(toastId);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Upload canceled")),
-                        );
-                      },
-                      child: const Text(
-                        "CANCEL",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  );
-                },
-                child: const Text(
-                  "Show Non-Auto-Dismiss Banner Toast with Action",
-                ),
-              ),
-
-              const Divider(height: 40, thickness: 1),
-
-              // ❌ Message shorter than 5 chars
-              ElevatedButton(
-                onPressed: () {
-                  try {
-                    Toastify.show(
-                      context,
-                      message: "Hi", // Only 2 characters -> triggers exception
-                      type: ToastType.info,
-                      position: ToastPosition.bottom,
-                      style: ToastStyle.snackBar,
-                    );
-                  } catch (e) {
-                    debugPrint("Exception:: ${e.toString()}");
-                    if (e is ToastifyException) {
-                      debugPrint("Toastify error caught:: ${e.message}");
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text("Error: ${e.message}"),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
-                    } else {
-                      rethrow;
-                    }
-                  }
-                },
-                child: const Text("Show Invalid Message (Length < 5)"),
-              ),
-
-              const Divider(height: 40, thickness: 1),
-
-              ElevatedButton(
-                onPressed: () {
-                  Toastify.show(
-                    context,
-                    title: "Animated",
-                    message: "Custom animation applied!",
-                    type: ToastType.info,
-                    position: ToastPosition.bottom,
-                    style: ToastStyle.snackBar,
-                    appearCurve: Curves.decelerate,
-                    dismissCurve: Curves.easeInCubic,
-                    animationDuration: const Duration(milliseconds: 500),
-                  );
-                },
-                child: const Text("Show Animated Toast"),
-              ),
-            ],
+      appBar: AppBar(
+        title: const Text('Toastify Demo'),
+        actions: [
+          TextButton.icon(
+            onPressed: Toastify.dismissAll,
+            icon: const Icon(Icons.clear_all),
+            label: const Text('Dismiss all'),
           ),
+          const SizedBox(width: 8),
+        ],
+      ),
+      body: ListView.separated(
+        padding: const EdgeInsets.all(16),
+        itemBuilder: (context, index) {
+          final section = sections[index];
+          return _DemoSectionCard(section: section);
+        },
+        separatorBuilder: (_, __) => const SizedBox(height: 16),
+        itemCount: sections.length,
+      ),
+    );
+  }
+}
+
+class _DemoSectionCard extends StatelessWidget {
+  const _DemoSectionCard({required this.section});
+
+  final DemoSection section;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(section.title, style: theme.textTheme.headlineSmall),
+            const SizedBox(height: 8),
+            Text(section.description, style: theme.textTheme.bodyMedium),
+            const SizedBox(height: 16),
+            ...section.examples.map(
+              (example) => Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: _DemoExampleTile(example: example),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DemoExampleTile extends StatelessWidget {
+  const _DemoExampleTile({required this.example});
+
+  final DemoExample example;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Material(
+      color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.35),
+      borderRadius: BorderRadius.circular(16),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(example.title, style: theme.textTheme.titleMedium),
+                      const SizedBox(height: 6),
+                      Text(
+                        example.description,
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                      if (example.note != null) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          example.note!,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 16),
+                FilledButton.icon(
+                  onPressed: () => example.onRun(context),
+                  icon: const Icon(Icons.play_arrow_rounded),
+                  label: const Text('Run'),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

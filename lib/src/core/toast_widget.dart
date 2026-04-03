@@ -32,33 +32,29 @@ class _ToastStackHostState extends State<_ToastStackHost>
       duration: widget.details.animationDuration,
     );
 
-    _fade = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: widget.details.appearCurve,
-        reverseCurve: widget.details.dismissCurve,
-      ),
+    final animation = CurvedAnimation(
+      parent: _controller,
+      curve: widget.details.appearCurve,
+      reverseCurve: widget.details.dismissCurve,
     );
 
+    _fade = Tween<double>(begin: 0.0, end: 1.0).animate(animation);
     _slide = Tween<Offset>(
       begin: Offset(
         0,
         widget.details.position == ToastPosition.top ? -0.8 : 0.8,
       ),
       end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: widget.details.appearCurve,
-        reverseCurve: widget.details.dismissCurve,
-      ),
-    );
+    ).animate(animation);
 
     _controller.forward();
   }
 
   void dismiss() {
-    if (_isDismissing || !mounted) return;
+    if (_isDismissing || !mounted) {
+      return;
+    }
+
     _isDismissing = true;
     _controller.reverse().then((_) => widget.onDismiss());
   }
@@ -71,70 +67,187 @@ class _ToastStackHostState extends State<_ToastStackHost>
 
   @override
   Widget build(BuildContext context) {
-    final sameGroup = widget.allEntries
+    final entriesInGroup = widget.allEntries
         .where(
-          (e) =>
-              e.style == widget.details.style &&
-              e.position == widget.details.position,
+          (entry) =>
+              entry.style == widget.details.style &&
+              entry.position == widget.details.position,
         )
-        .toList();
+        .toList(growable: false)
+        .reversed
+        .toList(growable: false);
 
-    final reversed = sameGroup.reversed.toList();
-    final int indexFromNewest = reversed.indexWhere(
-      (e) => e.entry == widget.currentEntry,
+    final stackIndex = entriesInGroup.indexWhere(
+      (entry) => entry.entry == widget.currentEntry,
     );
 
-    if (indexFromNewest == -1 || indexFromNewest >= 3) {
+    if (stackIndex == -1 || stackIndex >= 3) {
       return const SizedBox.shrink();
     }
 
-    final int effectiveIndex = indexFromNewest;
-
-    final double scale = switch (effectiveIndex) {
-      0 => 1.0,
-      1 => 0.95,
-      _ => 0.90,
-    };
-
-    final bool isBanner = widget.details.style == ToastStyle.banner;
-    final bool isTop = widget.details.position == ToastPosition.top;
-
-    final double gap = isBanner ? 20.0 : 16.0;
-    final double offsetY = effectiveIndex * gap;
-
-    final double safeTop = MediaQuery.of(context).viewPadding.top;
-    final double safeBottom = MediaQuery.of(context).viewPadding.bottom;
-
-    double? top, bottom;
-    if (isTop) {
-      top = isBanner ? offsetY : safeTop + 16.0 + offsetY;
-    } else {
-      bottom = isBanner ? offsetY : safeBottom + 16.0 + offsetY;
-    }
+    final layout = _ToastLayoutResolver(
+      context: context,
+      details: widget.details,
+      stackIndex: stackIndex,
+    ).resolve();
 
     return Positioned(
-      top: top,
-      bottom: bottom,
-      left: isBanner ? 0.0 : 16.0,
-      right: isBanner ? 0.0 : 16.0,
-      child: FadeTransition(
-        opacity: _fade,
-        child: SlideTransition(
-          position: _slide,
-          child: Transform.scale(
-            scale: scale,
-            alignment: isTop ? Alignment.topCenter : Alignment.bottomCenter,
-            child: Dismissible(
-              key: ValueKey(widget.details.id),
-              direction: DismissDirection.horizontal,
-              onDismissed: (_) => dismiss(),
-              child: _ToastContent(details: widget.details, onTap: dismiss),
-            ),
+      top: layout.top,
+      bottom: layout.bottom,
+      left: 0,
+      right: 0,
+      child: Padding(
+        padding: layout.outerPadding,
+        child: Align(
+          alignment: layout.alignment,
+          child: _buildResponsiveToast(layout.scale),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildResponsiveToast(double scale) {
+    Widget child = _AnimatedToast(
+      id: widget.details.id,
+      fade: _fade,
+      slide: _slide,
+      scale: scale,
+      position: widget.details.position,
+      onDismissed: dismiss,
+      child: _ToastContent(details: widget.details, onTap: dismiss),
+    );
+
+    if (widget.details.maxWidth != null) {
+      child = ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: widget.details.maxWidth!),
+        child: child,
+      );
+    }
+
+    if (widget.details.widthFactor != null) {
+      child = FractionallySizedBox(
+        widthFactor: widget.details.widthFactor,
+        alignment: _fractionalAlignment,
+        child: child,
+      );
+    } else if (widget.details.horizontalAlignment ==
+        ToastHorizontalAlignment.stretch) {
+      child = SizedBox(width: double.infinity, child: child);
+    }
+
+    return child;
+  }
+
+  Alignment get _fractionalAlignment => switch (widget.details.horizontalAlignment) {
+        ToastHorizontalAlignment.start => Alignment.centerLeft,
+        ToastHorizontalAlignment.end => Alignment.centerRight,
+        _ => Alignment.center,
+      };
+}
+
+class _AnimatedToast extends StatelessWidget {
+  final String id;
+  final Animation<double> fade;
+  final Animation<Offset> slide;
+  final double scale;
+  final ToastPosition position;
+  final VoidCallback onDismissed;
+  final Widget child;
+
+  const _AnimatedToast({
+    required this.id,
+    required this.fade,
+    required this.slide,
+    required this.scale,
+    required this.position,
+    required this.onDismissed,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: fade,
+      child: SlideTransition(
+        position: slide,
+        child: Transform.scale(
+          scale: scale,
+          alignment: position == ToastPosition.top
+              ? Alignment.topCenter
+              : Alignment.bottomCenter,
+          child: Dismissible(
+            key: ValueKey(id),
+            direction: DismissDirection.horizontal,
+            onDismissed: (_) => onDismissed(),
+            child: child,
           ),
         ),
       ),
     );
   }
+}
+
+class _ToastLayoutResolver {
+  final BuildContext context;
+  final ToastDetails details;
+  final int stackIndex;
+
+  const _ToastLayoutResolver({
+    required this.context,
+    required this.details,
+    required this.stackIndex,
+  });
+
+  _ToastLayoutSpec resolve() {
+    final mediaQuery = MediaQuery.of(context);
+    final safeTop = mediaQuery.viewPadding.top;
+    final safeBottom = mediaQuery.viewPadding.bottom;
+    final isTop = details.position == ToastPosition.top;
+    final isBanner = details.style == ToastStyle.banner;
+    final stackOffset = stackIndex * (isBanner ? 20.0 : 16.0);
+
+    final outerPadding = EdgeInsets.only(
+      left: 16,
+      right: 16,
+      top: isTop ? (isBanner ? stackOffset : safeTop + 16 + stackOffset) : 0,
+      bottom: isTop
+          ? 0
+          : (isBanner ? stackOffset : safeBottom + 16 + stackOffset),
+    );
+
+    return _ToastLayoutSpec(
+      top: isTop ? 0 : null,
+      bottom: isTop ? null : 0,
+      outerPadding: outerPadding,
+      alignment: switch (details.horizontalAlignment) {
+        ToastHorizontalAlignment.start => Alignment.topLeft,
+        ToastHorizontalAlignment.center => Alignment.topCenter,
+        ToastHorizontalAlignment.end => Alignment.topRight,
+        ToastHorizontalAlignment.stretch => Alignment.topCenter,
+      },
+      scale: switch (stackIndex) {
+        0 => 1.0,
+        1 => 0.95,
+        _ => 0.90,
+      },
+    );
+  }
+}
+
+class _ToastLayoutSpec {
+  final double? top;
+  final double? bottom;
+  final EdgeInsets outerPadding;
+  final Alignment alignment;
+  final double scale;
+
+  const _ToastLayoutSpec({
+    required this.top,
+    required this.bottom,
+    required this.outerPadding,
+    required this.alignment,
+    required this.scale,
+  });
 }
 
 class _ToastContent extends StatelessWidget {
@@ -165,7 +278,7 @@ class _ToastContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = details.backgroundColor ?? _bgColor();
+    final backgroundColor = details.backgroundColor ?? _bgColor();
     final isBanner = details.style == ToastStyle.banner;
     final isTop = details.position == ToastPosition.top;
     final safeTop = MediaQuery.of(context).viewPadding.top;
@@ -177,7 +290,7 @@ class _ToastContent extends StatelessWidget {
         onTap: onTap,
         child: Container(
           width: double.infinity,
-          constraints: details.style == ToastStyle.banner
+          constraints: isBanner
               ? const BoxConstraints(minHeight: 120, minWidth: double.infinity)
               : const BoxConstraints(minHeight: 60),
           padding: EdgeInsets.only(
@@ -187,7 +300,10 @@ class _ToastContent extends StatelessWidget {
             bottom: isBanner && !isTop ? safeBottom + 28 : 24,
           ),
           decoration: BoxDecoration(
-            color: bg,
+            color: backgroundColor,
+            border: details.borderColor == null
+                ? null
+                : Border.all(color: details.borderColor!),
             borderRadius: isBanner
                 ? (isTop
                     ? const BorderRadius.only(
@@ -199,13 +315,14 @@ class _ToastContent extends StatelessWidget {
                         topRight: Radius.circular(28),
                       ))
                 : BorderRadius.circular(14),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.32),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
-              ),
-            ],
+            boxShadow: details.boxShadow ??
+                [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.32),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
           ),
           child: Row(
             children: [

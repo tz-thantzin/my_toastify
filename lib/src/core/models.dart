@@ -35,11 +35,24 @@ class ToastDetails {
   /// Explicit background color. If `null`, color is derived from [type].
   final Color? backgroundColor;
 
-  /// Optional border color (currently unused – reserved for future use).
+  /// Optional border color for the toast container.
   final Color? borderColor;
 
   /// Custom box shadows. If `null`, a default subtle shadow is applied.
   final List<BoxShadow>? boxShadow;
+
+  /// Fraction of the available overlay width used by the toast.
+  ///
+  /// Must be greater than `0` and less than or equal to `1`.
+  ///
+  /// Example: `0.5` renders the toast at half the available width.
+  final double? widthFactor;
+
+  /// Maximum width of the toast in logical pixels.
+  final double? maxWidth;
+
+  /// Horizontal placement of the toast inside the overlay bounds.
+  final ToastHorizontalAlignment horizontalAlignment;
 
   /// How long the toast stays visible when [isAutoDismissible] is true.
   final Duration duration;
@@ -74,6 +87,9 @@ class ToastDetails {
     this.backgroundColor,
     this.borderColor,
     this.boxShadow,
+    this.widthFactor,
+    this.maxWidth,
+    this.horizontalAlignment = ToastHorizontalAlignment.stretch,
     this.duration = const Duration(seconds: 3),
     this.animationDuration = const Duration(milliseconds: 400),
     this.appearCurve = Curves.easeOutBack,

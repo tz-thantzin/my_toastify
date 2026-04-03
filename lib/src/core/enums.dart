@@ -43,3 +43,18 @@ enum ToastStyle {
   @Deprecated('Use ToastStyle.banner instead')
   bannerStyle,
 }
+
+/// Horizontal placement of the toast inside the available overlay width.
+enum ToastHorizontalAlignment {
+  /// Pins the toast to the left side of the available width.
+  start,
+
+  /// Centers the toast horizontally.
+  center,
+
+  /// Pins the toast to the right side of the available width.
+  end,
+
+  /// Expands the toast to fill the available width.
+  stretch,
+}
