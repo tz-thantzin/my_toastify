@@ -1,11 +1,12 @@
 /// A beautiful, highly customizable toast/notification system for Flutter.
 ///
-/// Toastify provides rich toast styles (snack-bar & full-width banner),
+/// Toastify provides snack-bar, banner, and theme-aware minimal toast styles,
 /// stacking behaviour, swipe-to-dismiss, custom icons/actions, theming,
 /// and fine-grained control over position, duration, width and alignment.
 ///
 /// ## Features
-/// - Multiple toast styles: `ToastStyle.snackBar` and `ToastStyle.banner`
+/// - Multiple toast styles: `ToastStyle.snackBar`, `ToastStyle.banner`, and
+///   `ToastStyle.minimal`
 /// - Stack up to 3 toasts with nice scale animation
 /// - Top or bottom positioning
 /// - Auto-dismiss with custom duration

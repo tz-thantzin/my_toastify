@@ -7,19 +7,103 @@ A beautiful, customizable **toast notification system** for Flutter.
 Supports banners, snackbars, custom icons, actions, and multiple stacking positions.
 
 ---
-<img src="display/toastify.gif" alt="Toastify Demo" width="400" />
+<img src="display/toastify_1_3.gif" alt="Toastify minimal style demo" width="400" />
 
 ---
 ## 🚀 Features
 - Overlay-based toast notifications
 - Top or bottom stacking
-- Two styles: **snackBar** & **banner**
+- Three styles: **snackBar**, **banner**, and **minimal**
 - Optional width + alignment controls for web and desktop layouts
 - Custom icons, actions, and colors
 - Auto-dismiss with animation
 - Multiple toasts at once
 - Swipe-to-dismiss gesture
 - Customize toast animation
+
+---
+
+## 🎬 Animated examples
+
+These GIFs show every demo in the [example app](example/README.md). Run the app to try the controls yourself.
+
+### Minimal success card
+
+Use `ToastStyle.minimal` for compact, theme-aware feedback.
+
+![Minimal success toast appearing and dismissing](display/demos/minimal.gif)
+
+### Top success snackbar
+
+Set `ToastPosition.top` with `ToastStyle.snackBar` for a success message.
+
+![Top success snackbar appearing and dismissing](display/demos/top_success.gif)
+
+### Bottom error snackbar
+
+Use `ToastType.error` at the bottom for failed actions.
+
+![Bottom error snackbar appearing and dismissing](display/demos/bottom_error.gif)
+
+### Top info banner
+
+Combine `ToastType.info`, `ToastPosition.top`, and `ToastStyle.banner` for announcements.
+
+![Top info banner appearing and dismissing](display/demos/top_banner.gif)
+
+### Bottom warning banner
+
+Use `ToastType.warning` in a bottom banner for attention-worthy updates.
+
+![Bottom warning banner appearing and dismissing](display/demos/bottom_banner.gif)
+
+### Half-width bottom-right banner
+
+Set `widthFactor: 0.5` and `horizontalAlignment: ToastHorizontalAlignment.end` on wide screens.
+
+![Half-width banner aligned to the bottom right](display/demos/half_width.gif)
+
+### Centered 60% banner
+
+Set `widthFactor: 0.6` and `horizontalAlignment: ToastHorizontalAlignment.center`.
+
+![Centered banner using 60 percent of the available width](display/demos/centered.gif)
+
+### Right-aligned snackbar with max width
+
+Set `maxWidth: 420` and `horizontalAlignment: ToastHorizontalAlignment.end`.
+
+![Right-aligned snackbar constrained to a maximum width](display/demos/max_width.gif)
+
+### Countdown with pause
+
+Set `showProgressBar: true`; hover or press and hold to pause the countdown.
+
+![Toast countdown progress bar](display/demos/countdown.gif)
+
+### Custom leading icon
+
+Pass a widget to `leading` to replace the default toast icon.
+
+![Toast with a custom leading icon](display/demos/leading.gif)
+
+### Banner with action
+
+Pass a button to `action` to let users respond from the toast.
+
+![Toast action button being pressed](display/demos/action.gif)
+
+### Border and shadow styling
+
+Use `borderColor` and `boxShadow` to customize the toast surface.
+
+![Toast with custom border and shadow](display/demos/border_shadow.gif)
+
+### Persistent toast with cancel action
+
+Set `isAutoDismissible: false` and dismiss the returned ID with `Toastify.dismissById`.
+
+![Persistent toast dismissed with its cancel action](display/demos/persistent.gif)
 
 ---
 
@@ -41,7 +125,7 @@ $ flutter pub add my_toastify
 | title             | String?          | null                  | Optional title above message             |
 | type              | ToastType        | ToastType.info        | Defines color/icon scheme                |
 | position          | ToastPosition    | ToastPosition.bottom  | Where toast appears                      |
-| style             | ToastStyle       | ToastStyle.snackBar   | Toast UI layout                          |
+| style             | ToastStyle       | ToastStyle.snackBar   | Toast UI layout, including `minimal`     |
 | titleTextStyle    | TextStyle?       | textTheme.titleMedium | Custom title style                       |
 | messageTextStyle  | TextStyle?       | textTheme.bodyMedium  | Custom message style                     |
 | leading           | Widget?          | null                  | Optional icon widget                     |
@@ -53,6 +137,8 @@ $ flutter pub add my_toastify
 | maxWidth          | double?          | null                  | Maximum toast width                      |
 | horizontalAlignment | ToastHorizontalAlignment | stretch       | Horizontal placement within overlay      |
 | duration          | Duration         | 3 seconds             | Auto dismiss time                        |
+| showProgressBar   | bool             | false                 | Show a countdown bar for auto-dismiss     |
+| pauseOnInteraction| bool             | true                  | Pause countdown on hover or long-press    |
 | onDismiss         | VoidCallback?    | null                  | Callback when toast is dismissed         |
 | isAutoDismissible | bool             | true                  | Set false to prevent automatic dismissal |
 | animationDuration | Duration         | 500ms                 | Duration of entrance/exit animation      |
@@ -66,7 +152,7 @@ $ flutter pub add my_toastify
 
 ```dart
 import 'package:flutter/material.dart';
-import 'package:toastify/my_toastify.dart';
+import 'package:my_toastify/my_toastify.dart';
 
 void main() {
   runApp(const ToastifyDemo());
@@ -99,6 +185,37 @@ class ToastifyDemo extends StatelessWidget {
     );
   }
 }
+```
+
+### ⏳ Countdown and pause
+
+Show the remaining display time, and let users pause it by hovering (desktop/web)
+or pressing and holding (touch):
+
+```dart
+Toastify.show(
+  context,
+  message: 'You can pause this countdown.',
+  duration: const Duration(seconds: 5),
+  showProgressBar: true,
+);
+```
+
+### ✨ Minimal style
+
+Use a compact card that follows the app's light or dark theme. The icon and
+countdown use the toast type's accent color. The card defaults to a 420-pixel
+maximum width; set `maxWidth` to change it.
+
+```dart
+Toastify.show(
+  context,
+  title: 'Saved',
+  message: 'Your changes are ready.',
+  type: ToastType.success,
+  style: ToastStyle.minimal,
+  showProgressBar: true,
+);
 ```
 
 ---

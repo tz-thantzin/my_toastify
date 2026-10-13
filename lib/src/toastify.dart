@@ -48,6 +48,8 @@ class Toastify {
     Duration animationDuration = const Duration(milliseconds: 400),
     VoidCallback? onDismiss,
     bool isAutoDismissible = true,
+    bool showProgressBar = false,
+    bool pauseOnInteraction = true,
   }) {
     if (!context.mounted) {
       throw ToastifyException(
@@ -97,6 +99,8 @@ class Toastify {
       animationDuration: animationDuration,
       onDismiss: onDismiss,
       isAutoDismissible: isAutoDismissible,
+      showProgressBar: showProgressBar,
+      pauseOnInteraction: pauseOnInteraction,
     );
 
     _manager.show(context, details);

@@ -18,6 +18,8 @@ class _ToastManager {
         allEntries: _entries,
         currentEntry: entry,
         onDismiss: () => _remove(entry, details.onDismiss),
+        onPauseTimer: () => _pauseTimer(entry),
+        onResumeTimer: () => _resumeTimer(entry, details.onDismiss),
       ),
     );
 
@@ -27,6 +29,7 @@ class _ToastManager {
       style: details.style,
       position: details.position,
       createdAt: DateTime.now(),
+      remainingDuration: details.duration,
     );
 
     queueEntry.mountedStateListener = () {
@@ -45,11 +48,44 @@ class _ToastManager {
     overlay.insert(entry);
 
     if (details.isAutoDismissible) {
-      queueEntry.dismissTimer = Timer(details.duration, () {
-        if (_entries.any((e) => e.entry == entry && entry.mounted)) {
-          _remove(entry, details.onDismiss);
-        }
-      });
+      _startTimer(queueEntry, details.onDismiss);
+    }
+  }
+
+  void _startTimer(_ToastQueueEntry entry, VoidCallback? onDismiss) {
+    entry.timerStopwatch = Stopwatch()..start();
+    entry.dismissTimer = Timer(entry.remainingDuration, () {
+      if (_entries.any((e) => e.entry == entry.entry && entry.entry.mounted)) {
+        _remove(entry.entry, onDismiss);
+      }
+    });
+  }
+
+  void _pauseTimer(OverlayEntry overlayEntry) {
+    final entry = _entries.cast<_ToastQueueEntry?>().firstWhere(
+          (candidate) => candidate?.entry == overlayEntry,
+          orElse: () => null,
+        );
+    if (entry == null || entry.dismissTimer == null) return;
+
+    entry.timerStopwatch?.stop();
+    entry.remainingDuration -= entry.timerStopwatch?.elapsed ?? Duration.zero;
+    entry.dismissTimer?.cancel();
+    entry.dismissTimer = null;
+    entry.timerStopwatch = null;
+  }
+
+  void _resumeTimer(OverlayEntry overlayEntry, VoidCallback? onDismiss) {
+    final entry = _entries.cast<_ToastQueueEntry?>().firstWhere(
+          (candidate) => candidate?.entry == overlayEntry,
+          orElse: () => null,
+        );
+    if (entry == null || entry.dismissTimer != null) return;
+
+    if (entry.remainingDuration <= Duration.zero) {
+      _remove(overlayEntry, onDismiss);
+    } else {
+      _startTimer(entry, onDismiss);
     }
   }
 

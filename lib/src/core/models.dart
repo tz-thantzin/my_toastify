@@ -72,6 +72,12 @@ class ToastDetails {
   /// Whether the toast should disappear automatically after [duration].
   final bool isAutoDismissible;
 
+  /// Whether to show a countdown bar while the toast is visible.
+  final bool showProgressBar;
+
+  /// Whether hover and long-press pause the auto-dismiss countdown.
+  final bool pauseOnInteraction;
+
   /// Creates a new [ToastDetails] configuration object.
   const ToastDetails({
     required this.id,
@@ -96,6 +102,8 @@ class ToastDetails {
     this.dismissCurve = Curves.easeInBack,
     this.onDismiss,
     this.isAutoDismissible = true,
+    this.showProgressBar = false,
+    this.pauseOnInteraction = true,
   });
 }
 
@@ -110,6 +118,8 @@ class _ToastQueueEntry {
   final ToastPosition position;
   final DateTime createdAt;
   Timer? dismissTimer;
+  Duration remainingDuration;
+  Stopwatch? timerStopwatch;
   VoidCallback? mountedStateListener;
 
   _ToastQueueEntry({
@@ -118,5 +128,6 @@ class _ToastQueueEntry {
     required this.style,
     required this.position,
     required this.createdAt,
+    required this.remainingDuration,
   });
 }

@@ -8,8 +8,23 @@ List<DemoSection> buildCustomizationDemoSections() {
     DemoSection(
       title: 'Customization',
       description:
-          'Examples for richer visuals, custom actions and controlled dismissal.',
+          'Examples for richer visuals, countdowns, custom actions and dismissal.',
       examples: [
+        DemoExample(
+          title: 'Countdown with pause',
+          description:
+              'Shows remaining time and pauses while hovered or pressed and held.',
+          onRun: (context) {
+            Toastify.show(
+              context,
+              title: 'Take your time',
+              message: 'The countdown pauses while you read this toast.',
+              type: ToastType.info,
+              duration: const Duration(seconds: 6),
+              showProgressBar: true,
+            );
+          },
+        ),
         DemoExample(
           title: 'Custom leading icon',
           description: 'Swap the default icon for domain-specific feedback.',

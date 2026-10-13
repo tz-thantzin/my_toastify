@@ -5,12 +5,16 @@ class _ToastStackHost extends StatefulWidget {
   final List<_ToastQueueEntry> allEntries;
   final OverlayEntry currentEntry;
   final VoidCallback onDismiss;
+  final VoidCallback onPauseTimer;
+  final VoidCallback onResumeTimer;
 
   const _ToastStackHost({
     required this.details,
     required this.allEntries,
     required this.currentEntry,
     required this.onDismiss,
+    required this.onPauseTimer,
+    required this.onResumeTimer,
   });
 
   @override
@@ -18,10 +22,11 @@ class _ToastStackHost extends StatefulWidget {
 }
 
 class _ToastStackHostState extends State<_ToastStackHost>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _fade;
   late final Animation<Offset> _slide;
+  AnimationController? _progressController;
   bool _isDismissing = false;
 
   @override
@@ -48,6 +53,13 @@ class _ToastStackHostState extends State<_ToastStackHost>
     ).animate(animation);
 
     _controller.forward();
+
+    if (widget.details.showProgressBar && widget.details.isAutoDismissible) {
+      _progressController = AnimationController(
+        vsync: this,
+        duration: widget.details.duration,
+      )..forward();
+    }
   }
 
   void dismiss() {
@@ -59,9 +71,22 @@ class _ToastStackHostState extends State<_ToastStackHost>
     _controller.reverse().then((_) => widget.onDismiss());
   }
 
+  void pauseTimer() {
+    if (!widget.details.pauseOnInteraction) return;
+    widget.onPauseTimer();
+    _progressController?.stop();
+  }
+
+  void resumeTimer() {
+    if (!widget.details.pauseOnInteraction) return;
+    widget.onResumeTimer();
+    _progressController?.forward();
+  }
+
   @override
   void dispose() {
     _controller.dispose();
+    _progressController?.dispose();
     super.dispose();
   }
 
@@ -107,6 +132,8 @@ class _ToastStackHostState extends State<_ToastStackHost>
   }
 
   Widget _buildResponsiveToast(double scale) {
+    final maxWidth = widget.details.maxWidth ??
+        (widget.details.style == ToastStyle.minimal ? 420.0 : null);
     Widget child = _AnimatedToast(
       id: widget.details.id,
       fade: _fade,
@@ -114,12 +141,19 @@ class _ToastStackHostState extends State<_ToastStackHost>
       scale: scale,
       position: widget.details.position,
       onDismissed: dismiss,
-      child: _ToastContent(details: widget.details, onTap: dismiss),
+      onPauseTimer: pauseTimer,
+      onResumeTimer: resumeTimer,
+      progress: _progressController,
+      child: _ToastContent(
+        details: widget.details,
+        onTap: dismiss,
+        progress: _progressController,
+      ),
     );
 
-    if (widget.details.maxWidth != null) {
+    if (maxWidth != null) {
       child = ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: widget.details.maxWidth!),
+        constraints: BoxConstraints(maxWidth: maxWidth),
         child: child,
       );
     }
@@ -131,14 +165,16 @@ class _ToastStackHostState extends State<_ToastStackHost>
         child: child,
       );
     } else if (widget.details.horizontalAlignment ==
-        ToastHorizontalAlignment.stretch) {
+            ToastHorizontalAlignment.stretch &&
+        maxWidth == null) {
       child = SizedBox(width: double.infinity, child: child);
     }
 
     return child;
   }
 
-  Alignment get _fractionalAlignment => switch (widget.details.horizontalAlignment) {
+  Alignment get _fractionalAlignment =>
+      switch (widget.details.horizontalAlignment) {
         ToastHorizontalAlignment.start => Alignment.centerLeft,
         ToastHorizontalAlignment.end => Alignment.centerRight,
         _ => Alignment.center,
@@ -152,6 +188,9 @@ class _AnimatedToast extends StatelessWidget {
   final double scale;
   final ToastPosition position;
   final VoidCallback onDismissed;
+  final VoidCallback onPauseTimer;
+  final VoidCallback onResumeTimer;
+  final Animation<double>? progress;
   final Widget child;
 
   const _AnimatedToast({
@@ -161,24 +200,35 @@ class _AnimatedToast extends StatelessWidget {
     required this.scale,
     required this.position,
     required this.onDismissed,
+    required this.onPauseTimer,
+    required this.onResumeTimer,
+    required this.progress,
     required this.child,
   });
 
   @override
-  Widget build(BuildContext context) => FadeTransition(
-        opacity: fade,
-        child: SlideTransition(
-          position: slide,
-          child: Transform.scale(
-            scale: scale,
-            alignment: position == ToastPosition.top
-                ? Alignment.topCenter
-                : Alignment.bottomCenter,
-            child: Dismissible(
-              key: ValueKey(id),
-              direction: DismissDirection.horizontal,
-              onDismissed: (_) => onDismissed(),
-              child: child,
+  Widget build(BuildContext context) => MouseRegion(
+        onEnter: (_) => onPauseTimer(),
+        onExit: (_) => onResumeTimer(),
+        child: GestureDetector(
+          onLongPressStart: (_) => onPauseTimer(),
+          onLongPressEnd: (_) => onResumeTimer(),
+          child: FadeTransition(
+            opacity: fade,
+            child: SlideTransition(
+              position: slide,
+              child: Transform.scale(
+                scale: scale,
+                alignment: position == ToastPosition.top
+                    ? Alignment.topCenter
+                    : Alignment.bottomCenter,
+                child: Dismissible(
+                  key: ValueKey(id),
+                  direction: DismissDirection.horizontal,
+                  onDismissed: (_) => onDismissed(),
+                  child: child,
+                ),
+              ),
             ),
           ),
         ),
@@ -208,9 +258,8 @@ class _ToastLayoutResolver {
       left: 16,
       right: 16,
       top: isTop ? (isBanner ? stackOffset : safeTop + 16 + stackOffset) : 0,
-      bottom: isTop
-          ? 0
-          : (isBanner ? stackOffset : safeBottom + 16 + stackOffset),
+      bottom:
+          isTop ? 0 : (isBanner ? stackOffset : safeBottom + 16 + stackOffset),
     );
 
     return _ToastLayoutSpec(
@@ -251,8 +300,9 @@ class _ToastLayoutSpec {
 class _ToastContent extends StatelessWidget {
   final ToastDetails details;
   final VoidCallback? onTap;
+  final Animation<double>? progress;
 
-  const _ToastContent({required this.details, this.onTap});
+  const _ToastContent({required this.details, this.progress, this.onTap});
 
   Color _bgColor() => switch (details.type) {
         ToastType.error => Colors.redAccent,
@@ -261,22 +311,34 @@ class _ToastContent extends StatelessWidget {
         _ => Colors.blueAccent,
       };
 
-  Widget _icon() => switch (details.type) {
-        ToastType.error => const Icon(Icons.error_outline, color: Colors.white),
-        ToastType.warning => const Icon(
+  Widget _icon(Color color) => switch (details.type) {
+        ToastType.error => Icon(Icons.error_outline, color: color),
+        ToastType.warning => Icon(
             Icons.warning_amber_outlined,
-            color: Colors.white,
+            color: color,
           ),
-        ToastType.success => const Icon(
+        ToastType.success => Icon(
             Icons.check_circle_outline,
-            color: Colors.white,
+            color: color,
           ),
-        _ => const Icon(Icons.info_outline, color: Colors.white),
+        _ => Icon(Icons.info_outline, color: color),
       };
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColor = details.backgroundColor ?? _bgColor();
+    final colorScheme = Theme.of(context).colorScheme;
+    final accentColor = _bgColor();
+    final isMinimal = details.style == ToastStyle.minimal;
+    final backgroundColor = details.backgroundColor ??
+        (isMinimal ? colorScheme.surface : accentColor);
+    final foregroundColor = isMinimal
+        ? (details.backgroundColor == null
+            ? colorScheme.onSurface
+            : ThemeData.estimateBrightnessForColor(backgroundColor) ==
+                    Brightness.dark
+                ? Colors.white
+                : Colors.black)
+        : Colors.white;
     final isBanner = details.style == ToastStyle.banner;
     final isTop = details.position == ToastPosition.top;
     final safeTop = MediaQuery.of(context).viewPadding.top;
@@ -291,75 +353,118 @@ class _ToastContent extends StatelessWidget {
           constraints: isBanner
               ? const BoxConstraints(minHeight: 120, minWidth: double.infinity)
               : const BoxConstraints(minHeight: 60),
-          padding: EdgeInsets.only(
-            left: 24,
-            right: 24,
-            top: isBanner && isTop ? safeTop + 28 : 24,
-            bottom: isBanner && !isTop ? safeBottom + 28 : 24,
-          ),
+          padding: isMinimal
+              ? const EdgeInsets.symmetric(horizontal: 16, vertical: 14)
+              : EdgeInsets.only(
+                  left: 24,
+                  right: 24,
+                  top: isBanner && isTop ? safeTop + 28 : 24,
+                  bottom: isBanner && !isTop ? safeBottom + 28 : 24,
+                ),
           decoration: BoxDecoration(
             color: backgroundColor,
-            border: details.borderColor == null
-                ? null
-                : Border.all(color: details.borderColor!),
-            borderRadius: isBanner
-                ? (isTop
-                    ? const BorderRadius.only(
-                        bottomLeft: Radius.circular(28),
-                        bottomRight: Radius.circular(28),
-                      )
-                    : const BorderRadius.only(
-                        topLeft: Radius.circular(28),
-                        topRight: Radius.circular(28),
-                      ))
-                : BorderRadius.circular(14),
+            border: details.borderColor != null
+                ? Border.all(color: details.borderColor!)
+                : isMinimal
+                    ? Border.all(color: colorScheme.outlineVariant)
+                    : null,
+            borderRadius: isMinimal
+                ? BorderRadius.circular(18)
+                : isBanner
+                    ? (isTop
+                        ? const BorderRadius.only(
+                            bottomLeft: Radius.circular(28),
+                            bottomRight: Radius.circular(28),
+                          )
+                        : const BorderRadius.only(
+                            topLeft: Radius.circular(28),
+                            topRight: Radius.circular(28),
+                          ))
+                    : BorderRadius.circular(14),
             boxShadow: details.boxShadow ??
                 [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.32),
-                    blurRadius: 20,
-                    offset: const Offset(0, 8),
+                    color:
+                        Colors.black.withValues(alpha: isMinimal ? 0.12 : 0.32),
+                    blurRadius: isMinimal ? 18 : 20,
+                    offset: Offset(0, isMinimal ? 6 : 8),
                   ),
                 ],
           ),
-          child: Row(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(right: 14),
-                child: details.leading ?? _icon(),
-              ),
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (details.title != null)
-                      Text(
-                        details.title!,
-                        style: details.titleTextStyle ??
-                            context.defaultTitleStyle.copyWith(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                            ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    if (details.title != null) const SizedBox(height: 6),
-                    Text(
-                      details.message,
-                      style: details.messageTextStyle ??
-                          context.defaultMessageStyle.copyWith(fontSize: 15),
-                      maxLines: 4,
-                      overflow: TextOverflow.ellipsis,
+              Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(right: isMinimal ? 12 : 14),
+                    child: details.leading ??
+                        (isMinimal
+                            ? DecoratedBox(
+                                decoration: BoxDecoration(
+                                  color: accentColor.withValues(alpha: 0.12),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8),
+                                  child: _icon(accentColor),
+                                ),
+                              )
+                            : _icon(Colors.white)),
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (details.title != null)
+                          Text(
+                            details.title!,
+                            style: details.titleTextStyle ??
+                                context.defaultTitleStyle.copyWith(
+                                  color: foregroundColor,
+                                  fontSize: isMinimal ? 15 : 17,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        if (details.title != null) const SizedBox(height: 6),
+                        Text(
+                          details.message,
+                          style: details.messageTextStyle ??
+                              context.defaultMessageStyle.copyWith(
+                                color: foregroundColor,
+                                fontSize: isMinimal ? 14 : 15,
+                              ),
+                          maxLines: 4,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  if (details.action != null)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16),
+                      child: details.action!,
+                    ),
+                ],
               ),
-              if (details.action != null)
-                Padding(
-                  padding: const EdgeInsets.only(left: 16),
-                  child: details.action!,
+              if (details.showProgressBar && progress != null) ...[
+                const SizedBox(height: 12),
+                AnimatedBuilder(
+                  animation: progress!,
+                  builder: (context, _) => LinearProgressIndicator(
+                    value: 1 - progress!.value,
+                    minHeight: 3,
+                    backgroundColor: (isMinimal ? accentColor : Colors.white)
+                        .withValues(alpha: 0.28),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      isMinimal ? accentColor : Colors.white,
+                    ),
+                  ),
                 ),
+              ],
             ],
           ),
         ),

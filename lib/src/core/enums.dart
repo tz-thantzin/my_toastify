@@ -33,6 +33,9 @@ enum ToastStyle {
   /// Great for important announcements or promotional messages.
   banner,
 
+  /// Compact card using the current theme with a color accent for the type.
+  minimal,
+
   /// @Deprecated: Use [snackBar] instead.
   /// Kept for backward compatibility only.
   @Deprecated('Use ToastStyle.snackBar instead')

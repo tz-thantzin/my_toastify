@@ -3,6 +3,53 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:my_toastify/my_toastify.dart';
 
 void main() {
+  testWidgets('minimal toast uses the dark theme surface and type accent', (
+    tester,
+  ) async {
+    final theme = ThemeData.dark(useMaterial3: true);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: theme,
+        home: Builder(
+          builder: (context) => Scaffold(
+            body: ElevatedButton(
+              onPressed: () => Toastify.show(
+                context,
+                title: 'Saved',
+                message: 'Your changes are ready.',
+                type: ToastType.success,
+                style: ToastStyle.minimal,
+              ),
+              child: const Text('Show minimal'),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Show minimal'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 450));
+
+    final card = tester
+        .widgetList<Container>(
+          find.ancestor(
+              of: find.text('Saved'), matching: find.byType(Container)),
+        )
+        .firstWhere((widget) => widget.decoration is BoxDecoration);
+    expect(
+        (card.decoration! as BoxDecoration).color, theme.colorScheme.surface);
+    expect(tester.getSize(find.byWidget(card)).width, lessThanOrEqualTo(420));
+    expect(tester.widget<Text>(find.text('Saved')).style?.color,
+        theme.colorScheme.onSurface);
+    expect(tester.widget<Icon>(find.byIcon(Icons.check_circle_outline)).color,
+        Colors.green);
+
+    Toastify.dismissAll();
+    await tester.pumpAndSettle();
+  });
+
   testWidgets('shows toast with fractional width and end alignment', (
     tester,
   ) async {

@@ -12,6 +12,20 @@ List<DemoSection> buildBasicDemoSections() {
           'Core toast patterns that cover the most common app feedback states.',
       examples: [
         DemoExample(
+          title: 'Minimal success card',
+          description: 'A compact toast that follows the app theme.',
+          onRun: (context) {
+            Toastify.show(
+              context,
+              title: 'Saved',
+              message: 'Your changes are ready.',
+              type: ToastType.success,
+              style: ToastStyle.minimal,
+              showProgressBar: true,
+            );
+          },
+        ),
+        DemoExample(
           title: 'Top success snackbar',
           description: 'A compact success toast pinned to the top edge.',
           onRun: (context) {
@@ -62,7 +76,8 @@ List<DemoSection> buildBasicDemoSections() {
             Toastify.show(
               context,
               title: 'Connection unstable',
-              message: 'Some actions may retry automatically in the background.',
+              message:
+                  'Some actions may retry automatically in the background.',
               type: ToastType.warning,
               position: ToastPosition.bottom,
               style: ToastStyle.banner,

@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:my_toastify/my_toastify.dart';
 
 import 'demo_catalog.dart';
@@ -16,6 +16,7 @@ List<DemoSection> buildLayoutDemoSections() {
               'Great for desktop and web layouts where a full-width banner feels too heavy.',
           note: 'Uses widthFactor: 0.5 and horizontalAlignment.end.',
           onRun: (context) {
+            final useWideLayout = MediaQuery.sizeOf(context).width >= 600;
             Toastify.show(
               context,
               title: 'Web layout',
@@ -23,8 +24,8 @@ List<DemoSection> buildLayoutDemoSections() {
               type: ToastType.info,
               position: ToastPosition.bottom,
               style: ToastStyle.banner,
-              widthFactor: kIsWeb ? 0.5 : null,
-              horizontalAlignment: kIsWeb
+              widthFactor: useWideLayout ? 0.5 : null,
+              horizontalAlignment: useWideLayout
                   ? ToastHorizontalAlignment.end
                   : ToastHorizontalAlignment.stretch,
             );
@@ -57,7 +58,8 @@ List<DemoSection> buildLayoutDemoSections() {
             Toastify.show(
               context,
               title: 'Queued',
-              message: 'Your export job has been added to the processing queue.',
+              message:
+                  'Your export job has been added to the processing queue.',
               type: ToastType.info,
               position: ToastPosition.bottom,
               style: ToastStyle.snackBar,

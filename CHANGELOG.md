@@ -1,3 +1,12 @@
+## 1.3.0
+### Added
+- Added an optional countdown progress bar for auto-dismissing toasts.
+- Added hover and long-press pausing for toast auto-dismiss timers.
+- Added `ToastStyle.minimal`, a compact theme-aware card with semantic accents.
+
+### Improved
+- Auto-dismiss countdowns now preserve their remaining time while paused.
+
 ## 1.2.0
 ### Added
 - Added `widthFactor` for fractional toast widths.
