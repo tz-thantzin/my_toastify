@@ -1,5 +1,54 @@
 part of '../toastify.dart';
 
+/// Shared visual tokens for toast notifications.
+///
+/// Pass one instance to multiple calls or set it on [ToastifyController] to
+/// apply consistent type colors, surface colors, corners, and shadows.
+class ToastifyThemeData {
+  /// Creates reusable toast styling.
+  const ToastifyThemeData({
+    this.infoColor,
+    this.successColor,
+    this.warningColor,
+    this.errorColor,
+    this.surfaceColor,
+    this.foregroundColor,
+    this.borderRadius,
+    this.boxShadow,
+  });
+
+  /// Accent for informational notifications.
+  final Color? infoColor;
+
+  /// Accent for successful notifications.
+  final Color? successColor;
+
+  /// Accent for warning notifications.
+  final Color? warningColor;
+
+  /// Accent for error notifications.
+  final Color? errorColor;
+
+  /// Surface used by minimal style notifications.
+  final Color? surfaceColor;
+
+  /// Foreground color for text and icons.
+  final Color? foregroundColor;
+
+  /// Shared border radius for the toast card.
+  final BorderRadiusGeometry? borderRadius;
+
+  /// Shared shadow list.
+  final List<BoxShadow>? boxShadow;
+
+  Color accentFor(ToastType type) => switch (type) {
+        ToastType.info => infoColor ?? Colors.blueAccent,
+        ToastType.success => successColor ?? Colors.green,
+        ToastType.warning => warningColor ?? Colors.orangeAccent,
+        ToastType.error => errorColor ?? Colors.redAccent,
+      };
+}
+
 /// All configuration data for a single toast instance.
 class ToastDetails {
   /// Unique identifier of the toast. If omitted, an auto-generated id is used.
@@ -19,6 +68,18 @@ class ToastDetails {
 
   /// Semantic type – controls default background color and leading icon.
   final ToastType type;
+
+  /// Optional key used to replace an existing toast with the same key.
+  final String? deduplicationKey;
+
+  /// Reusable visual styling for this toast.
+  final ToastifyThemeData? theme;
+
+  /// Optional label announced by assistive technologies.
+  final String? semanticLabel;
+
+  /// Whether this toast should be announced as a live region update.
+  final bool announceToScreenReader;
 
   /// Custom text style for the title. Falls back to theme-based style.
   final TextStyle? titleTextStyle;
@@ -84,6 +145,10 @@ class ToastDetails {
     required this.message,
     this.title,
     this.type = ToastType.info,
+    this.deduplicationKey,
+    this.theme,
+    this.semanticLabel,
+    this.announceToScreenReader = true,
     this.position = ToastPosition.bottom,
     this.style = ToastStyle.snackBar,
     this.titleTextStyle,
@@ -116,6 +181,8 @@ class _ToastQueueEntry {
   final OverlayEntry entry;
   final ToastStyle style;
   final ToastPosition position;
+  final String? deduplicationKey;
+  final VoidCallback? onDismiss;
   final DateTime createdAt;
   Timer? dismissTimer;
   Duration remainingDuration;
@@ -127,6 +194,8 @@ class _ToastQueueEntry {
     required this.entry,
     required this.style,
     required this.position,
+    this.deduplicationKey,
+    this.onDismiss,
     required this.createdAt,
     required this.remainingDuration,
   });

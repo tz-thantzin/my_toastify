@@ -4,6 +4,15 @@ This example app is organized as a small catalog of copy-paste friendly toast sc
 
 Run it with `flutter run` from this directory, then select a demo to try its controls.
 
+The catalog includes controller queues, deduplication, shared themes,
+screen-reader announcements, and corner/center placement. The combined preview
+shows these features in sequence:
+
+<img src="../display/demos/v2_features.gif" alt="Toastify v2 feature showcase" width="800" />
+
+Run `flutter run -d chrome --web-port 5184` and open `/?demo=features` to replay
+the preview sequence.
+
 ## Animated examples
 
 ### Minimal success card
@@ -90,6 +99,7 @@ Keeps the toast visible until its CANCEL action dismisses it.
 - `lib/examples/basic_examples.dart` – baseline snackbar and banner patterns
 - `lib/examples/layout_examples.dart` – width/alignment examples including bottom-right half-width web usage
 - `lib/examples/customization_examples.dart` – leading widgets, actions, border/shadow and persistent toasts
+- `lib/examples/queue_examples.dart` – app-level controller and queued notification examples
 - `lib/examples/demo_catalog.dart` – shared demo models used by the catalog UI
 
 ## Why this layout

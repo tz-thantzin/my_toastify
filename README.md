@@ -7,7 +7,7 @@ A beautiful, customizable **toast notification system** for Flutter.
 Supports banners, snackbars, custom icons, actions, and multiple stacking positions.
 
 ---
-<img src="display/toastify_1_3.gif" alt="Toastify minimal style demo" width="400" />
+<img src="display/demos/v2_features.gif" alt="Toastify v2 deduplication, themes, accessibility, and positions" width="800" />
 
 ---
 ## 🚀 Features
@@ -20,6 +20,11 @@ Supports banners, snackbars, custom icons, actions, and multiple stacking positi
 - Multiple toasts at once
 - Swipe-to-dismiss gesture
 - Customize toast animation
+- Show and control toasts through an app-level host and controller
+- Replace repeated notifications with deduplication keys
+- Reuse shared colors, surfaces, corners, and shadows with `ToastifyThemeData`
+- Announce toast updates with screen reader live regions
+- Position toasts in screen corners or at the center
 
 ---
 
@@ -114,7 +119,7 @@ $ flutter pub add my_toastify
 
 ---
 
-## 🧠 API Reference
+## 🧠 Toast Options
 
 ### ToastDetails
 
@@ -125,6 +130,10 @@ $ flutter pub add my_toastify
 | title             | String?          | null                  | Optional title above message             |
 | type              | ToastType        | ToastType.info        | Defines color/icon scheme                |
 | position          | ToastPosition    | ToastPosition.bottom  | Where toast appears                      |
+| deduplicationKey  | String?          | null                  | Replaces an existing toast with the same key |
+| theme             | ToastifyThemeData? | null                | Reusable toast colors, radius, and shadows |
+| semanticLabel     | String?          | null                  | Accessible label for the toast           |
+| announceToScreenReader | bool          | true                  | Announce toast as a live region update   |
 | style             | ToastStyle       | ToastStyle.snackBar   | Toast UI layout, including `minimal`     |
 | titleTextStyle    | TextStyle?       | textTheme.titleMedium | Custom title style                       |
 | messageTextStyle  | TextStyle?       | textTheme.bodyMedium  | Custom message style                     |
@@ -145,10 +154,96 @@ $ flutter pub add my_toastify
 | appearCurve       | Curve            | Curves.easeOutBack    | Curve for show animation                 |
 | dismissCurve      | Curve            | Curves.easeIn         | Curve for dismiss animation              |
 
+### v2 notification features
+
+Give repeated updates the same `deduplicationKey` to replace the visible
+notification instead of stacking stale updates:
+
+```dart
+toastController.show(
+  title: 'Syncing',
+  message: '3 background tasks are running.',
+  deduplicationKey: 'background-sync',
+);
+```
+
+Set shared visual tokens on the controller, or pass a `theme` to one toast.
+`ToastifyThemeData` supports type colors, minimal-style surface and foreground
+colors, border radius, and shadows:
+
+```dart
+final toastTheme = ToastifyThemeData(
+  successColor: const Color(0xFF286D65),
+  surfaceColor: const Color(0xFFF0FAF7),
+  foregroundColor: const Color(0xFF153D38),
+  borderRadius: BorderRadius.circular(18),
+);
+
+final toastController = ToastifyController(theme: toastTheme);
+```
+
+To announce meaningful updates to assistive technology, supply a concise
+`semanticLabel`. Live region announcements are enabled by default and can be
+disabled for nonessential notifications. `ToastPosition` also includes
+`topLeft`, `topRight`, `bottomLeft`, `bottomRight`, and `center` presets:
+
+```dart
+toastController.show(
+  title: 'Payment received',
+  message: 'Your receipt is ready to view.',
+  semanticLabel: 'Payment received. Your receipt is ready to view.',
+  position: ToastPosition.topRight,
+);
+```
+
 
 ---
 
 ## 💡 Example Usage
+
+### App-level controller (v2.0)
+
+Mount a `ToastifyHost` once in `MaterialApp.builder`, then show or dismiss
+notifications through its controller without passing a page `BuildContext`:
+
+```dart
+final toastController = ToastifyController();
+
+MaterialApp(
+  builder: (context, child) => ToastifyHost(
+    controller: toastController,
+    child: child ?? const SizedBox.shrink(),
+  ),
+  home: const HomePage(),
+);
+
+// From callbacks or app services:
+toastController.show(
+  title: 'Saved',
+  message: 'Your changes were saved.',
+  type: ToastType.success,
+);
+```
+
+By default, a controller shows up to three of its toasts at once and queues
+additional notifications until a visible toast is dismissed. Configure the
+limit and overflow behavior when creating the controller:
+
+```dart
+final toastController = ToastifyController(
+  maxVisibleToasts: 1,
+  queuePolicy: ToastQueuePolicy.replaceOldest,
+);
+```
+
+`ToastQueuePolicy` supports `queue`, `dropNewest`, and `replaceOldest`. The
+controller also provides `dismissById`, `dismissFirst`, `dismissLast`, and
+`dismissAll`.
+
+The [example app](example/README.md) includes a runnable queue demo and shows
+the app-level host integration:
+
+![The controller queue showing upload notifications one at a time](display/demos/queue_controller.gif)
 
 ```dart
 import 'package:flutter/material.dart';
