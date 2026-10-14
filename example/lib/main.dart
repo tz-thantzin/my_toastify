@@ -5,33 +5,91 @@ import 'examples/basic_examples.dart';
 import 'examples/customization_examples.dart';
 import 'examples/demo_catalog.dart';
 import 'examples/layout_examples.dart';
+import 'examples/queue_examples.dart';
 
 void main() => runApp(const ToastifyDemoApp());
 
-class ToastifyDemoApp extends StatelessWidget {
+class ToastifyDemoApp extends StatefulWidget {
   const ToastifyDemoApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Toastify Demo',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        colorSchemeSeed: Colors.blue,
-        cardTheme: const CardThemeData(margin: EdgeInsets.zero),
-      ),
-      home: const ToastDemoPage(),
-    );
-  }
+  State<ToastifyDemoApp> createState() => _ToastifyDemoAppState();
 }
 
-class ToastDemoPage extends StatelessWidget {
-  const ToastDemoPage({super.key});
+class _ToastifyDemoAppState extends State<ToastifyDemoApp> {
+  final _toastController = ToastifyController(
+    maxVisibleToasts: 1,
+    queuePolicy: ToastQueuePolicy.queue,
+  );
+
+  @override
+  Widget build(BuildContext context) => MaterialApp(
+        title: 'Toastify Demo',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          useMaterial3: true,
+          colorSchemeSeed: Colors.blue,
+          cardTheme: const CardThemeData(margin: EdgeInsets.zero),
+        ),
+        builder: (context, child) => ToastifyHost(
+          controller: _toastController,
+          child: child ?? const SizedBox.shrink(),
+        ),
+        home: ToastDemoPage(
+          controller: _toastController,
+          autoRunQueue: Uri.base.queryParameters['demo'] == 'queue' ||
+              Uri.base.queryParameters['demo'] == 'features',
+          autoRunFeatures: Uri.base.queryParameters['demo'] == 'features' ||
+              Uri.base.queryParameters['demo']?.startsWith('feature-') == true,
+          featureStep:
+              Uri.base.queryParameters['demo']?.replaceFirst('feature-', ''),
+        ),
+      );
+}
+
+class ToastDemoPage extends StatefulWidget {
+  const ToastDemoPage({
+    required this.controller,
+    required this.autoRunQueue,
+    required this.autoRunFeatures,
+    this.featureStep,
+    super.key,
+  });
+
+  final ToastifyController controller;
+  final bool autoRunQueue;
+  final bool autoRunFeatures;
+  final String? featureStep;
+
+  @override
+  State<ToastDemoPage> createState() => _ToastDemoPageState();
+}
+
+class _ToastDemoPageState extends State<ToastDemoPage> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.autoRunFeatures) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          showV2FeaturePreview(
+            widget.controller,
+            feature: widget.featureStep,
+          );
+        }
+      });
+    } else if (widget.autoRunQueue) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) showQueuedUploadUpdates(widget.controller);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final sections = <DemoSection>[
+      ...buildQueueDemoSections(widget.controller),
+      ...buildV2FeatureDemoSections(widget.controller),
       ...buildBasicDemoSections(),
       ...buildLayoutDemoSections(),
       ...buildCustomizationDemoSections(),
@@ -42,7 +100,7 @@ class ToastDemoPage extends StatelessWidget {
         title: const Text('Toastify Demo'),
         actions: [
           TextButton.icon(
-            onPressed: Toastify.dismissAll,
+            onPressed: widget.controller.dismissAll,
             icon: const Icon(Icons.clear_all),
             label: const Text('Dismiss all'),
           ),
@@ -51,10 +109,9 @@ class ToastDemoPage extends StatelessWidget {
       ),
       body: ListView.separated(
         padding: const EdgeInsets.all(16),
-        itemBuilder: (context, index) {
-          final section = sections[index];
-          return _DemoSectionCard(section: section);
-        },
+        itemBuilder: (context, index) => _DemoSectionCard(
+          section: sections[index],
+        ),
         separatorBuilder: (_, __) => const SizedBox(height: 16),
         itemCount: sections.length,
       ),

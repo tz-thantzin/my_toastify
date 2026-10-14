@@ -1,3 +1,14 @@
+## 2.0.0
+### Added
+- Added `ToastifyHost` and `ToastifyController` for app-level toast management without passing a page `BuildContext` to each call.
+- Added controller methods to show notifications, dismiss by ID, dismiss the first or last toast, and dismiss all toasts.
+- Added per-controller visible toast limits and queue, drop-newest, and replace-oldest overflow policies.
+- Added deduplication keys so repeated updates replace stale notifications.
+- Added reusable `ToastifyThemeData` styling for toast colors, surfaces, corners, and shadows.
+- Added screen-reader live region announcements with custom semantic labels.
+- Added top-left, top-right, bottom-left, bottom-right, and center position presets.
+- Added widget tests for host lifecycle, queues, deduplication, and accessibility labels.
+
 ## 1.3.0
 ### Added
 - Added an optional countdown progress bar for auto-dismissing toasts.

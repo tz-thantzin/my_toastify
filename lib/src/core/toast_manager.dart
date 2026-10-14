@@ -9,6 +9,16 @@ class _ToastManager {
   void show(BuildContext context, ToastDetails details) {
     if (!context.mounted) return;
 
+    if (details.deduplicationKey != null) {
+      final duplicate = _entries.cast<_ToastQueueEntry?>().firstWhere(
+            (entry) => entry?.deduplicationKey == details.deduplicationKey,
+            orElse: () => null,
+          );
+      if (duplicate != null) {
+        _remove(duplicate.entry, duplicate.onDismiss);
+      }
+    }
+
     final overlay = Overlay.of(context);
     late OverlayEntry entry;
 
@@ -28,6 +38,8 @@ class _ToastManager {
       entry: entry,
       style: details.style,
       position: details.position,
+      deduplicationKey: details.deduplicationKey,
+      onDismiss: details.onDismiss,
       createdAt: DateTime.now(),
       remainingDuration: details.duration,
     );

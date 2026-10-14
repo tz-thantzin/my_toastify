@@ -7,6 +7,7 @@ part 'core/exceptions.dart';
 part 'core/models.dart';
 part 'core/toast_manager.dart';
 part 'core/toast_widget.dart';
+part 'core/toast_host.dart';
 part 'extensions/context_x.dart';
 
 /// Main entry point for showing and controlling toasts.
@@ -29,6 +30,10 @@ class Toastify {
     String? toastId,
     String? title,
     ToastType type = ToastType.info,
+    String? deduplicationKey,
+    ToastifyThemeData? theme,
+    String? semanticLabel,
+    bool announceToScreenReader = true,
     ToastPosition position = ToastPosition.bottom,
     ToastStyle style = ToastStyle.snackBar,
     TextStyle? titleTextStyle,
@@ -81,6 +86,10 @@ class Toastify {
       message: message,
       title: title,
       type: type,
+      deduplicationKey: deduplicationKey,
+      theme: theme,
+      semanticLabel: semanticLabel,
+      announceToScreenReader: announceToScreenReader,
       position: position,
       style: style,
       titleTextStyle: titleTextStyle,

@@ -22,6 +22,35 @@ enum ToastPosition {
 
   /// Appears at the bottom of the screen (above the navigation bar).
   bottom,
+
+  /// Appears in the top-left corner.
+  topLeft,
+
+  /// Appears in the top-right corner.
+  topRight,
+
+  /// Appears in the bottom-left corner.
+  bottomLeft,
+
+  /// Appears in the bottom-right corner.
+  bottomRight,
+
+  /// Appears at the center of the overlay.
+  center,
+}
+
+extension on ToastPosition {
+  bool get isTop =>
+      this == ToastPosition.top ||
+      this == ToastPosition.topLeft ||
+      this == ToastPosition.topRight;
+
+  bool get isBottom =>
+      this == ToastPosition.bottom ||
+      this == ToastPosition.bottomLeft ||
+      this == ToastPosition.bottomRight;
+
+  bool get isCenter => this == ToastPosition.center;
 }
 
 /// The visual style of the toast.

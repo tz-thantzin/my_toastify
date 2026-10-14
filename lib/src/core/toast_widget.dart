@@ -47,7 +47,11 @@ class _ToastStackHostState extends State<_ToastStackHost>
     _slide = Tween<Offset>(
       begin: Offset(
         0,
-        widget.details.position == ToastPosition.top ? -0.8 : 0.8,
+        widget.details.position.isCenter
+            ? 0
+            : widget.details.position.isTop
+                ? -0.8
+                : 0.8,
       ),
       end: Offset.zero,
     ).animate(animation);
@@ -132,8 +136,15 @@ class _ToastStackHostState extends State<_ToastStackHost>
   }
 
   Widget _buildResponsiveToast(double scale) {
+    final isPositioned = widget.details.position.isCenter ||
+        widget.details.position == ToastPosition.topLeft ||
+        widget.details.position == ToastPosition.topRight ||
+        widget.details.position == ToastPosition.bottomLeft ||
+        widget.details.position == ToastPosition.bottomRight;
     final maxWidth = widget.details.maxWidth ??
-        (widget.details.style == ToastStyle.minimal ? 420.0 : null);
+        (widget.details.style == ToastStyle.minimal || isPositioned
+            ? 420.0
+            : null);
     Widget child = _AnimatedToast(
       id: widget.details.id,
       fade: _fade,
@@ -173,11 +184,19 @@ class _ToastStackHostState extends State<_ToastStackHost>
     return child;
   }
 
-  Alignment get _fractionalAlignment =>
-      switch (widget.details.horizontalAlignment) {
-        ToastHorizontalAlignment.start => Alignment.centerLeft,
-        ToastHorizontalAlignment.end => Alignment.centerRight,
-        _ => Alignment.center,
+  Alignment get _fractionalAlignment => switch (widget.details.position) {
+        ToastPosition.topLeft ||
+        ToastPosition.bottomLeft =>
+          Alignment.centerLeft,
+        ToastPosition.topRight ||
+        ToastPosition.bottomRight =>
+          Alignment.centerRight,
+        ToastPosition.center => Alignment.center,
+        _ => switch (widget.details.horizontalAlignment) {
+            ToastHorizontalAlignment.start => Alignment.centerLeft,
+            ToastHorizontalAlignment.end => Alignment.centerRight,
+            _ => Alignment.center,
+          },
       };
 }
 
@@ -219,9 +238,11 @@ class _AnimatedToast extends StatelessWidget {
               position: slide,
               child: Transform.scale(
                 scale: scale,
-                alignment: position == ToastPosition.top
-                    ? Alignment.topCenter
-                    : Alignment.bottomCenter,
+                alignment: position.isCenter
+                    ? Alignment.center
+                    : position.isTop
+                        ? Alignment.topCenter
+                        : Alignment.bottomCenter,
                 child: Dismissible(
                   key: ValueKey(id),
                   direction: DismissDirection.horizontal,
@@ -250,27 +271,43 @@ class _ToastLayoutResolver {
     final mediaQuery = MediaQuery.of(context);
     final safeTop = mediaQuery.viewPadding.top;
     final safeBottom = mediaQuery.viewPadding.bottom;
-    final isTop = details.position == ToastPosition.top;
+    final isTop = details.position.isTop;
+    final isBottom = details.position.isBottom;
+    final isCenter = details.position.isCenter;
     final isBanner = details.style == ToastStyle.banner;
     final stackOffset = stackIndex * (isBanner ? 20.0 : 16.0);
 
     final outerPadding = EdgeInsets.only(
       left: 16,
       right: 16,
-      top: isTop ? (isBanner ? stackOffset : safeTop + 16 + stackOffset) : 0,
-      bottom:
-          isTop ? 0 : (isBanner ? stackOffset : safeBottom + 16 + stackOffset),
+      top: isCenter
+          ? 16
+          : isTop
+              ? (isBanner ? stackOffset : safeTop + 16 + stackOffset)
+              : 0,
+      bottom: isCenter
+          ? 16
+          : isBottom
+              ? (isBanner ? stackOffset : safeBottom + 16 + stackOffset)
+              : 0,
     );
 
     return _ToastLayoutSpec(
-      top: isTop ? 0 : null,
-      bottom: isTop ? null : 0,
+      top: isTop || isCenter ? 0 : null,
+      bottom: isBottom || isCenter ? 0 : null,
       outerPadding: outerPadding,
-      alignment: switch (details.horizontalAlignment) {
-        ToastHorizontalAlignment.start => Alignment.topLeft,
-        ToastHorizontalAlignment.center => Alignment.topCenter,
-        ToastHorizontalAlignment.end => Alignment.topRight,
-        ToastHorizontalAlignment.stretch => Alignment.topCenter,
+      alignment: switch (details.position) {
+        ToastPosition.topLeft => Alignment.topLeft,
+        ToastPosition.topRight => Alignment.topRight,
+        ToastPosition.bottomLeft => Alignment.bottomLeft,
+        ToastPosition.bottomRight => Alignment.bottomRight,
+        ToastPosition.center => Alignment.center,
+        _ => switch (details.horizontalAlignment) {
+            ToastHorizontalAlignment.start => Alignment.topLeft,
+            ToastHorizontalAlignment.center => Alignment.topCenter,
+            ToastHorizontalAlignment.end => Alignment.topRight,
+            ToastHorizontalAlignment.stretch => Alignment.topCenter,
+          },
       },
       scale: switch (stackIndex) {
         0 => 1.0,
@@ -304,7 +341,9 @@ class _ToastContent extends StatelessWidget {
 
   const _ToastContent({required this.details, this.progress, this.onTap});
 
-  Color _bgColor() => switch (details.type) {
+  Color _bgColor() =>
+      details.theme?.accentFor(details.type) ??
+      switch (details.type) {
         ToastType.error => Colors.redAccent,
         ToastType.warning => Colors.orangeAccent,
         ToastType.success => Colors.green,
@@ -330,142 +369,153 @@ class _ToastContent extends StatelessWidget {
     final accentColor = _bgColor();
     final isMinimal = details.style == ToastStyle.minimal;
     final backgroundColor = details.backgroundColor ??
-        (isMinimal ? colorScheme.surface : accentColor);
-    final foregroundColor = isMinimal
-        ? (details.backgroundColor == null
-            ? colorScheme.onSurface
-            : ThemeData.estimateBrightnessForColor(backgroundColor) ==
-                    Brightness.dark
-                ? Colors.white
-                : Colors.black)
-        : Colors.white;
+        (isMinimal
+            ? details.theme?.surfaceColor ?? colorScheme.surface
+            : accentColor);
+    final foregroundColor = details.theme?.foregroundColor ??
+        (isMinimal
+            ? (details.backgroundColor == null
+                ? colorScheme.onSurface
+                : ThemeData.estimateBrightnessForColor(backgroundColor) ==
+                        Brightness.dark
+                    ? Colors.white
+                    : Colors.black)
+            : Colors.white);
     final isBanner = details.style == ToastStyle.banner;
-    final isTop = details.position == ToastPosition.top;
+    final isTop = details.position.isTop;
     final safeTop = MediaQuery.of(context).viewPadding.top;
     final safeBottom = MediaQuery.of(context).viewPadding.bottom;
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        child: Container(
-          width: double.infinity,
-          constraints: isBanner
-              ? const BoxConstraints(minHeight: 120, minWidth: double.infinity)
-              : const BoxConstraints(minHeight: 60),
-          padding: isMinimal
-              ? const EdgeInsets.symmetric(horizontal: 16, vertical: 14)
-              : EdgeInsets.only(
-                  left: 24,
-                  right: 24,
-                  top: isBanner && isTop ? safeTop + 28 : 24,
-                  bottom: isBanner && !isTop ? safeBottom + 28 : 24,
-                ),
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            border: details.borderColor != null
-                ? Border.all(color: details.borderColor!)
-                : isMinimal
-                    ? Border.all(color: colorScheme.outlineVariant)
-                    : null,
-            borderRadius: isMinimal
-                ? BorderRadius.circular(18)
-                : isBanner
-                    ? (isTop
-                        ? const BorderRadius.only(
-                            bottomLeft: Radius.circular(28),
-                            bottomRight: Radius.circular(28),
-                          )
-                        : const BorderRadius.only(
-                            topLeft: Radius.circular(28),
-                            topRight: Radius.circular(28),
-                          ))
-                    : BorderRadius.circular(14),
-            boxShadow: details.boxShadow ??
-                [
-                  BoxShadow(
-                    color:
-                        Colors.black.withValues(alpha: isMinimal ? 0.12 : 0.32),
-                    blurRadius: isMinimal ? 18 : 20,
-                    offset: Offset(0, isMinimal ? 6 : 8),
+    return Semantics(
+      container: true,
+      liveRegion: details.announceToScreenReader,
+      label: details.semanticLabel,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          child: Container(
+            width: double.infinity,
+            constraints: isBanner
+                ? const BoxConstraints(
+                    minHeight: 120, minWidth: double.infinity)
+                : const BoxConstraints(minHeight: 60),
+            padding: isMinimal
+                ? const EdgeInsets.symmetric(horizontal: 16, vertical: 14)
+                : EdgeInsets.only(
+                    left: 24,
+                    right: 24,
+                    top: isBanner && isTop ? safeTop + 28 : 24,
+                    bottom: isBanner && !isTop ? safeBottom + 28 : 24,
                   ),
-                ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(right: isMinimal ? 12 : 14),
-                    child: details.leading ??
-                        (isMinimal
-                            ? DecoratedBox(
-                                decoration: BoxDecoration(
-                                  color: accentColor.withValues(alpha: 0.12),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8),
-                                  child: _icon(accentColor),
-                                ),
-                              )
-                            : _icon(Colors.white)),
-                  ),
-                  Expanded(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (details.title != null)
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              border: details.borderColor != null
+                  ? Border.all(color: details.borderColor!)
+                  : isMinimal
+                      ? Border.all(color: colorScheme.outlineVariant)
+                      : null,
+              borderRadius: details.theme?.borderRadius ??
+                  (isMinimal
+                      ? BorderRadius.circular(18)
+                      : isBanner
+                          ? (isTop
+                              ? const BorderRadius.only(
+                                  bottomLeft: Radius.circular(28),
+                                  bottomRight: Radius.circular(28),
+                                )
+                              : const BorderRadius.only(
+                                  topLeft: Radius.circular(28),
+                                  topRight: Radius.circular(28),
+                                ))
+                          : BorderRadius.circular(14)),
+              boxShadow: details.boxShadow ??
+                  details.theme?.boxShadow ??
+                  [
+                    BoxShadow(
+                      color: Colors.black
+                          .withValues(alpha: isMinimal ? 0.12 : 0.32),
+                      blurRadius: isMinimal ? 18 : 20,
+                      offset: Offset(0, isMinimal ? 6 : 8),
+                    ),
+                  ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(right: isMinimal ? 12 : 14),
+                      child: details.leading ??
+                          (isMinimal
+                              ? DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    color: accentColor.withValues(alpha: 0.12),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8),
+                                    child: _icon(accentColor),
+                                  ),
+                                )
+                              : _icon(foregroundColor)),
+                    ),
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (details.title != null)
+                            Text(
+                              details.title!,
+                              style: details.titleTextStyle ??
+                                  context.defaultTitleStyle.copyWith(
+                                    color: foregroundColor,
+                                    fontSize: isMinimal ? 15 : 17,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          if (details.title != null) const SizedBox(height: 6),
                           Text(
-                            details.title!,
-                            style: details.titleTextStyle ??
-                                context.defaultTitleStyle.copyWith(
+                            details.message,
+                            style: details.messageTextStyle ??
+                                context.defaultMessageStyle.copyWith(
                                   color: foregroundColor,
-                                  fontSize: isMinimal ? 15 : 17,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: isMinimal ? 14 : 15,
                                 ),
-                            maxLines: 1,
+                            maxLines: 4,
                             overflow: TextOverflow.ellipsis,
                           ),
-                        if (details.title != null) const SizedBox(height: 6),
-                        Text(
-                          details.message,
-                          style: details.messageTextStyle ??
-                              context.defaultMessageStyle.copyWith(
-                                color: foregroundColor,
-                                fontSize: isMinimal ? 14 : 15,
-                              ),
-                          maxLines: 4,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  if (details.action != null)
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16),
-                      child: details.action!,
-                    ),
-                ],
-              ),
-              if (details.showProgressBar && progress != null) ...[
-                const SizedBox(height: 12),
-                AnimatedBuilder(
-                  animation: progress!,
-                  builder: (context, _) => LinearProgressIndicator(
-                    value: 1 - progress!.value,
-                    minHeight: 3,
-                    backgroundColor: (isMinimal ? accentColor : Colors.white)
-                        .withValues(alpha: 0.28),
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      isMinimal ? accentColor : Colors.white,
-                    ),
-                  ),
+                    if (details.action != null)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16),
+                        child: details.action!,
+                      ),
+                  ],
                 ),
+                if (details.showProgressBar && progress != null) ...[
+                  const SizedBox(height: 12),
+                  AnimatedBuilder(
+                    animation: progress!,
+                    builder: (context, _) => LinearProgressIndicator(
+                      value: 1 - progress!.value,
+                      minHeight: 3,
+                      backgroundColor: (isMinimal ? accentColor : Colors.white)
+                          .withValues(alpha: 0.28),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        isMinimal ? accentColor : Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),
